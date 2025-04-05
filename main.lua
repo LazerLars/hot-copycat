@@ -41,6 +41,11 @@ local spawn_Settings = {
 
 }
 
+local player_states = {
+    idle = 'idle',
+    walking = 'walking'
+}
+
 local player = {
     x = 0,
     y = 0,
@@ -48,9 +53,9 @@ local player = {
     y_target = 0,
     width = 24,
     height = 12,
-    scaling = 2,
+    scaling = 3,
     facing_left = true,
-    -- player_state = bus_states.idleing,
+    player_state = player_states.idle,
     distance_to_target = 0,
     collision = false
 }
@@ -86,7 +91,7 @@ function love.load()
     
     
     -- love.graphics.setBackgroundColor( 0/255, 135/255, 81/255) -- green
-    love.graphics.setBackgroundColor( 227/255, 160/255, 102/255)
+    -- love.graphics.setBackgroundColor( 227/255, 160/255, 102/255)
     love.window.setTitle( 'Hot Copycat' )
     --optional settings for window
     love.window.setMode(settings.sceenWidth*settings.scaleMuliplier, settings.screenHeight*settings.scaleMuliplier, {resizable=true, vsync=false, minwidth=200, minheight=200})
@@ -102,18 +107,20 @@ function love.load()
     love.graphics.setFont(font)
 
     -- path to images
-    -- image_path.watermelon_cursor = "src/sprites/cursor_watermelon.png"
+    local sprite_source = "src/sprites/"
+    image_path.player = "src/sprites/player_16x16_sprite_sheet_16x16.png"
+    -- image_path.player = sprite_source .. "player_16x16_sprite_sheet_16x16.png"
     
     
-    -- create the images
-    -- images.watermelon_cursor = love.graphics.newImage(image_path.watermelon_cursor)
+    -- create the images  
+    images.player = love.graphics.newImage(image_path.player)
   
-    -- grids  
-    -- grids.bus_idle_grid = anim8.newGrid(24, 12, images.bus_idle_sheet:getWidth(), images.bus_idle_sheet:getHeight())
+    -- grids
+    grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
+    
 
     -- animations
-    -- animations.bus_idle_animation = anim8.newAnimation(grids.bus_idle_grid('1-3',1), 0.1)
-
+    animations.player_idle_animation = anim8.newAnimation(grids.player_grid('1-5', 1), 0.3)
     -- move with tween
     -- move_bus = tween.new(2, bus, {x=bus.x_target,y=bus.y_target}, tween.easing.linear) -- how do i check that this is finished?
     
@@ -140,7 +147,7 @@ function love.update(dt)
     
         mouse_x = maid64.mouse.getX()
         mouse_y = maid64.mouse.getY()
-
+        animations.player_idle_animation:update(dt)
         -- animations.bus_idle_animation:update(dt)
         -- animations.bus_driving_animation:update(dt)
         if love.mouse.isDown(1) then
@@ -155,6 +162,7 @@ function love.update(dt)
     end
 
     if pause_game then
+        local a = 1
      -- we pause here
     end
 end
@@ -177,7 +185,9 @@ function love.draw()
         -- love.graphics.rectangle("fill", maid64.mouse.getX(),  maid64.mouse.getY(), 1,1)
     end
     
-
+    if pause_game == false then
+        animations.player_idle_animation:draw(images.player, 100, 200, 0, player.scaling, player.scaling)
+    end
     
     if pause_game then
 
