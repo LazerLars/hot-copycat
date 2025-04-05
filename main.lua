@@ -187,6 +187,11 @@ function love.load()
     
     -- set initial position of the buttons
     current_scene = scenes.chipping
+
+    mouse_x = maid64.mouse.getX()
+    mouse_y = maid64.mouse.getY()
+    mouse.x = mouse_x
+    mouse.y = mouse_y
 end
 
 function love.update(dt)
@@ -302,8 +307,7 @@ function love.draw()
              --can also draw shapes and get mouse position
             -- love.graphics.rectangle("fill", maid64.mouse.getX(),  maid64.mouse.getY(), 1,1)
         end
-
-
+    
     end
     
     if pause_game then
