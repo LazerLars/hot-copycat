@@ -7,7 +7,7 @@ FRENJAM @ 2025 - THEME " BOOTLEGS "
 
 Progress bar:   
 1st session (3h:15m):  
-idea dev, spriting 
+idea dev, spriting  
 ![](src/sprites/customer_16x16_00-Sheet.png)  
 ![](src/sprites/curciut%20board_64x64.png)  
 ![](src/sprites/player_16x16_sprite_sheet_16x16.png)   
