@@ -14,9 +14,9 @@ local tween = require 'src/libs/tween'
 -- +--------------+-------------+------+-----+-----+-----+-----+-----+-----+-----+
 local settings = {
     fullscreen = false,
-    scaleMuliplier = 1,
-    sceenWidth = 800,
-    screenHeight = 600
+    scaleMuliplier = 4,
+    sceenWidth = 480,
+    screenHeight = 270
 }
 
 developerMode = true
@@ -51,9 +51,10 @@ local player = {
     y = 0,
     x_target = 0,
     y_target = 0,
-    width = 24,
-    height = 12,
-    scaling = 3,
+    move_completed = true,
+    width = 16,
+    height = 16,
+    scaling = 1,
     facing_left = true,
     player_state = player_states.idle,
     distance_to_target = 0,
@@ -108,8 +109,8 @@ function love.load()
 
     -- path to images
     local sprite_source = "src/sprites/"
-    image_path.player = "src/sprites/player_16x16_sprite_sheet_16x16.png"
-    -- image_path.player = sprite_source .. "player_16x16_sprite_sheet_16x16.png"
+    -- image_path.player = "src/sprites/player_16x16_sprite_sheet_16x16.png"
+    image_path.player = sprite_source .. "player_16x16_sprite_sheet_16x16.png"
     
     
     -- create the images  
@@ -121,9 +122,10 @@ function love.load()
 
     -- animations
     animations.player_idle_animation = anim8.newAnimation(grids.player_grid('1-5', 1), 0.3)
+    animations.player_walk_animation = anim8.newAnimation(grids.player_grid('1-5', 2), 0.3)
     -- move with tween
     -- move_bus = tween.new(2, bus, {x=bus.x_target,y=bus.y_target}, tween.easing.linear) -- how do i check that this is finished?
-    
+    player_move = tween.new(2, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
 
     -- LOAD SOUNDS
     -- sfx.driving = love.audio.newSource("src/sfx/sfx_drive_short.wav", 'static')
@@ -143,15 +145,23 @@ function love.update(dt)
     if pause_game == false then
 
         timer = timer + dt
-      
-    
+        local player_move_completed =  player_move:update(dt)
+        if player_move_completed then
+            player.player_state = player_states.idle
+        end
+        -- player_move = tween.new(1, player, {x=400, y=400}, tween.easing.inOutSine)
         mouse_x = maid64.mouse.getX()
         mouse_y = maid64.mouse.getY()
-        animations.player_idle_animation:update(dt)
-        -- animations.bus_idle_animation:update(dt)
-        -- animations.bus_driving_animation:update(dt)
+        if player.player_state == player_states.idle then
+            animations.player_idle_animation:update(dt)
+        end
+        if player.player_state == player_states.walking then
+            animations.player_walk_animation:update(dt)
+            -- player_move = tween.new(5, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
+        end
+        
         if love.mouse.isDown(1) then
-            local test = 1
+            -- ..
         end	
 
 
@@ -180,13 +190,31 @@ function love.draw()
     if developerMode == true then
     
         love.graphics.print(maid64.mouse.getX() ..  "," ..  maid64.mouse.getY(), 1,1)
+        love.graphics.print("player state: " .. player.player_state, 1,16)
+        love.graphics.print("x,y state: " .. player.x_target .. "," .. player.y_target, 1,32)
+        
         -- love.graphics.print(math.floor(player.x-player.originX) ..  "," .. math.floor(player.y-player.originY), 1,58)
          --can also draw shapes and get mouse position
         -- love.graphics.rectangle("fill", maid64.mouse.getX(),  maid64.mouse.getY(), 1,1)
     end
     
     if pause_game == false then
-        animations.player_idle_animation:draw(images.player, 100, 200, 0, player.scaling, player.scaling)
+        if player.player_state == player_states.idle then
+            if player.facing_left then
+                animations.player_idle_animation:draw(images.player, player.x, player.y, 0, player.scaling, player.scaling)
+            else
+                animations.player_idle_animation:draw(images.player, player.x, player.y, 0, -player.scaling, player.scaling, player.width, 0)
+            end
+        end
+        if player.player_state == player_states.walking then
+            if player.facing_left then
+            animations.player_walk_animation:draw(images.player, player.x, player.y, 0, player.scaling, player.scaling)
+        else
+            animations.player_walk_animation:draw(images.player, player.x, player.y, 0, -player.scaling, player.scaling, player.width, 0)
+        end
+
+            
+        end
     end
     
     if pause_game then
@@ -209,6 +237,12 @@ function love.keypressed(key)
       
     end
 
+    if key == 'left' then
+        player.facing_left = true
+    end
+    if key == 'right' then
+        player.facing_left = false
+    end
     if key == "escape" then
         if pause_game == false then
             print("pause game")
@@ -251,6 +285,13 @@ function love.mousepressed(x, y, button, istouch)
     -- when the left mouse is released we want to reset the mouse selection so we can stop drawing the square on the screen
     if button == 1 then
         -- ...
+    end
+
+    if button == 2 then
+        player.player_state = player_states.walking
+        player.x_target = mouse_x
+        player.y_target = mouse_y
+        player_move = tween.new(2, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
     end
  end
 
