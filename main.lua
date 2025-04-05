@@ -84,7 +84,8 @@ local chip = {
     x_placement_span_min = 262,
     y_placement_span_min = 3,
     y_placement_span_max = 16,
-    collision = false
+    collision = false,
+    dragging = false
 
 }
 
@@ -104,7 +105,9 @@ local mouse = {
     width = 1, -- used to store the value of the width of the current ongoing selection
     height = 1, -- used to store the value of the height of the current on going selection
     scaling = 1, -- used in our collision function
-    collision = false
+    collision = false,
+    mouse_x_chip_off_set = 0,
+    mouse_y_chip_off_set = 0
 }
 
 local timer = 0
@@ -214,10 +217,25 @@ function love.update(dt)
 
         if current_scene == scenes.chipping then
             local chip_collsion = collision_check(mouse, chip)
-            if chip_collsion then
-                print("CHIP GRAPPED")
-            else 
-                print("no collision")
+          
+            if love.mouse.isDown(1) then
+                -- check if we can start dragging
+                if chip.dragging == false and chip_collsion then
+                    chip.dragging = true
+                    -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
+                    mouse.mouse_x_chip_off_set = mouse_x - chip.x
+                    mouse.mouse_y_chip_off_set = mouse_y - chip.y
+                end
+            else
+                -- Stop dragging when mouse released
+                chip.dragging = false
+            end
+
+            -- move of chip allowed..
+            if chip.dragging then
+                -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
+                chip.x = mouse_x - mouse.mouse_x_chip_off_set
+                chip.y = mouse_y - mouse.mouse_y_chip_off_set
             end
         end
       
@@ -227,9 +245,7 @@ function love.update(dt)
         end	
 
 
-        -- bus.distance_to_target = calculate_distance_between_two_targets(bus.x, bus.y, bus.x_target, bus.y_target)
-
-        -- local move_bus_complete = move_bus:update(dt)
+        -- player.distance_to_target = calculate_distance_between_two_targets(player.x, bus.y, player.x_target, player.y_target)
         
     end
 
