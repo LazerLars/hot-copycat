@@ -75,6 +75,19 @@ local circut_board = {
     scaling = 4
 }
 
+local chip = {
+    x = 262,
+    y = 7,
+    scaling = 4,
+    width = 7,
+    height = 7,
+    x_placement_span_min = 262,
+    y_placement_span_min = 3,
+    y_placement_span_max = 16,
+    collision = false
+
+}
+
 local enemies = {
 
 }
@@ -88,9 +101,10 @@ local mouse = {
     y = 0,
     x_current = 0,
     y_current = 0,
-    width = 0, -- used to store the value of the width of the current ongoing selection
-    height = 0, -- used to store the value of the height of the current on going selection
-    scaling = 1 -- used in our collision function
+    width = 1, -- used to store the value of the width of the current ongoing selection
+    height = 1, -- used to store the value of the height of the current on going selection
+    scaling = 1, -- used in our collision function
+    collision = false
 }
 
 local timer = 0
@@ -173,6 +187,11 @@ function love.load()
 end
 
 function love.update(dt)
+    mouse_x = maid64.mouse.getX()
+    mouse_y = maid64.mouse.getY()
+    mouse.x = mouse_x
+    mouse.y = mouse_y
+
     if pause_game == false then
 
         timer = timer + dt
@@ -194,7 +213,12 @@ function love.update(dt)
         end
 
         if current_scene == scenes.chipping then
-            -- ...
+            local chip_collsion = collision_check(mouse, chip)
+            if chip_collsion then
+                print("CHIP GRAPPED")
+            else 
+                print("no collision")
+            end
         end
       
         
@@ -225,16 +249,7 @@ function love.draw()
 
 
 
-    if developerMode == true then
-    
-        love.graphics.print(maid64.mouse.getX() ..  "," ..  maid64.mouse.getY(), 1,1)
-        love.graphics.print("player state: " .. player.player_state, 1,16)
-        love.graphics.print("x,y state: " .. player.x_target .. "," .. player.y_target, 1,32)
-        
-        -- love.graphics.print(math.floor(player.x-player.originX) ..  "," .. math.floor(player.y-player.originY), 1,58)
-         --can also draw shapes and get mouse position
-        -- love.graphics.rectangle("fill", maid64.mouse.getX(),  maid64.mouse.getY(), 1,1)
-    end
+  
     
     if pause_game == false then
         if current_scene == scenes.front_desk then
@@ -253,9 +268,26 @@ function love.draw()
             end
             end 
         end
+        
+        
         if current_scene == scenes.chipping then
             love.graphics.draw(images.circut_board_00, circut_board.x, circut_board.y, 0, circut_board.scaling, circut_board.scaling)
+            love.graphics.draw(images.chip_01, chip.x, chip.y, 0, chip.scaling, chip.scaling)
         end
+
+
+        if developerMode == true then
+    
+            love.graphics.print(maid64.mouse.getX() ..  "," ..  maid64.mouse.getY(), 1,1)
+            love.graphics.print("player state: " .. player.player_state, 1,16)
+            love.graphics.print("x,y state: " .. player.x_target .. "," .. player.y_target, 1,32)
+            
+            -- love.graphics.print(math.floor(player.x-player.originX) ..  "," .. math.floor(player.y-player.originY), 1,58)
+             --can also draw shapes and get mouse position
+            -- love.graphics.rectangle("fill", maid64.mouse.getX(),  maid64.mouse.getY(), 1,1)
+        end
+
+
     end
     
     if pause_game then
@@ -389,7 +421,5 @@ function collision_check(object_a, object_b)
 
     return isColliding
 end
-
-
 
 
