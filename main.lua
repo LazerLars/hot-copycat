@@ -35,6 +35,12 @@ local animations = {}
 
 local sfx = {}
 
+local scenes = {
+    chipping = 'chipping',
+    front_desk = 'front_desk'
+}
+
+local current_scene = scenes.front_desk
 
 
 local spawn_Settings = {
@@ -59,6 +65,14 @@ local player = {
     player_state = player_states.idle,
     distance_to_target = 0,
     collision = false
+}
+
+local circut_board = {
+    x = 0,
+    y = 0,
+    width = 64,
+    height = 64,
+    scaling = 4
 }
 
 local enemies = {
@@ -111,18 +125,35 @@ function love.load()
     local sprite_source = "src/sprites/"
     -- image_path.player = "src/sprites/player_16x16_sprite_sheet_16x16.png"
     image_path.player = sprite_source .. "player_16x16_sprite_sheet_16x16.png"
-    
-    
+    image_path.chip_00 = sprite_source .. "chip_00.png"
+    image_path.chip_01 = sprite_source .. "chip_01.png"
+    image_path.console_closed = sprite_source ..  "console_closed_16x13_00.png"
+    image_path.console_open = sprite_source .. "console_open_16x13_00.png"
+    image_path.circut_board_00 = sprite_source .. "curciut board_64x64.png"
+    image_path.customer_sprite_sheet = sprite_source .. "customer_16x16_00-Sheet.png"
+
     -- create the images  
+    -- new_img = love.graphics.newImage
     images.player = love.graphics.newImage(image_path.player)
+    images.chip_00 = love.graphics.newImage(image_path.chip_00)
+    images.chip_01 = love.graphics.newImage(image_path.chip_01)
+    images.console_closed = love.graphics.newImage(image_path.console_closed)
+    images.console_open = love.graphics.newImage(image_path.console_open)
+    images.circut_board_00 = love.graphics.newImage(image_path.circut_board_00)
+    images.customer_sprite_sheet = love.graphics.newImage(image_path.customer_sprite_sheet)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
+    -- grids.customers_grid = anim8.newGrid(16,16, images.customer_sprite_sheet, images.customer_sprite_sheet:getWidth(), images.customer_sprite_sheet:getHeight() )
     
 
     -- animations
     animations.player_idle_animation = anim8.newAnimation(grids.player_grid('1-5', 1), 0.3)
     animations.player_walk_animation = anim8.newAnimation(grids.player_grid('1-5', 2), 0.3)
+
+    -- animations.customer_00_idle
+    -- animations.customer_01_walk
+    -- animations.customer_02_sleep
     -- move with tween
     -- move_bus = tween.new(2, bus, {x=bus.x_target,y=bus.y_target}, tween.easing.linear) -- how do i check that this is finished?
     player_move = tween.new(2, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
@@ -138,27 +169,34 @@ function love.load()
     -- sfx.idle:play()
     
     -- set initial position of the buttons
-    
+    current_scene = scenes.chipping
 end
 
 function love.update(dt)
     if pause_game == false then
 
         timer = timer + dt
-        local player_move_completed =  player_move:update(dt)
-        if player_move_completed then
-            player.player_state = player_states.idle
+        if current_scene == scenes.front_desk then
+            local player_move_completed =  player_move:update(dt)
+            if player_move_completed then
+                player.player_state = player_states.idle
+            end
+            -- player_move = tween.new(1, player, {x=400, y=400}, tween.easing.inOutSine)
+            mouse_x = maid64.mouse.getX()
+            mouse_y = maid64.mouse.getY()
+            if player.player_state == player_states.idle then
+                animations.player_idle_animation:update(dt)
+            end
+            if player.player_state == player_states.walking then
+                animations.player_walk_animation:update(dt)
+                -- player_move = tween.new(5, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
+            end
         end
-        -- player_move = tween.new(1, player, {x=400, y=400}, tween.easing.inOutSine)
-        mouse_x = maid64.mouse.getX()
-        mouse_y = maid64.mouse.getY()
-        if player.player_state == player_states.idle then
-            animations.player_idle_animation:update(dt)
+
+        if current_scene == scenes.chipping then
+            -- ...
         end
-        if player.player_state == player_states.walking then
-            animations.player_walk_animation:update(dt)
-            -- player_move = tween.new(5, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
-        end
+      
         
         if love.mouse.isDown(1) then
             -- ..
@@ -199,21 +237,24 @@ function love.draw()
     end
     
     if pause_game == false then
-        if player.player_state == player_states.idle then
-            if player.facing_left then
-                animations.player_idle_animation:draw(images.player, player.x, player.y, 0, player.scaling, player.scaling)
-            else
-                animations.player_idle_animation:draw(images.player, player.x, player.y, 0, -player.scaling, player.scaling, player.width, 0)
+        if current_scene == scenes.front_desk then
+            if player.player_state == player_states.idle then
+                if player.facing_left then
+                    animations.player_idle_animation:draw(images.player, player.x, player.y, 0, player.scaling, player.scaling)
+                else
+                    animations.player_idle_animation:draw(images.player, player.x, player.y, 0, -player.scaling, player.scaling, player.width, 0)
+                end
             end
+            if player.player_state == player_states.walking then
+                if player.facing_left then
+                animations.player_walk_animation:draw(images.player, player.x, player.y, 0, player.scaling, player.scaling)
+            else
+                animations.player_walk_animation:draw(images.player, player.x, player.y, 0, -player.scaling, player.scaling, player.width, 0)
+            end
+            end 
         end
-        if player.player_state == player_states.walking then
-            if player.facing_left then
-            animations.player_walk_animation:draw(images.player, player.x, player.y, 0, player.scaling, player.scaling)
-        else
-            animations.player_walk_animation:draw(images.player, player.x, player.y, 0, -player.scaling, player.scaling, player.width, 0)
-        end
-
-            
+        if current_scene == scenes.chipping then
+            love.graphics.draw(images.circut_board_00, circut_board.x, circut_board.y, 0, circut_board.scaling, circut_board.scaling)
         end
     end
     
