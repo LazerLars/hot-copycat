@@ -1,22 +1,21 @@
-# BUSMARN
-LÖVE JAM 2025 - THEME " PLANNING "  
-https://itch.io/jam/love2d-jam-2025  
+# HOT COPY CAT
+FRENJAM @ 2025 - THEME " BOOTLEGS "  
+[https://itch.io/jam/love2d-jam-2025  ](https://itch.io/jam/frenjam)
 
-### THIS IS A GAME ABOUT HOW YOU PLAN NOT TO PICK UP ANY PASSENGERS
+### THIS IS A HOT CHIP MODDING BUSINESS FOR CONSOLES
 
-![](busmarn_final.gif)  
 
 Progress bar:   
-1st session (3½ hours):
-![](busmarn_love2d_2025_jam.gif)  
-2nd session (3hrs21min)  
-![](busmarn_7_hours_in_resized.gif)  
-3nd session (38 min)  
-No gif... :D 
-4nd session (3hrs51min)  
-![](busmarn_final.gif)
-
-Total time spend: 11hrs20min
+1st session (3h:15m):  
+![](src/sprites/customer_16x16_00-Sheet.png)  
+![](src/sprites/curciut%20board_64x64.png)  
+![](src/sprites/player_16x16_sprite_sheet_16x16.png)   
+![](src/sprites/console_open_16x13_00.png)  
+![](src/sprites/console_closed_16x13_00.png)  
+idea dev, spriting  
+  
+2nd session (3h:27m)  
+![](gif/hot%20copycat_first%20take.gif)  
 
 Coding setup: VScode
 Spriting: Asesprite
@@ -29,15 +28,7 @@ https://github.com/kikito/anim8
 https://github.com/kikito/tween.lua  
 
 Sfx:  
-Brake sfx: Car Breaking Skid 01.wav by Medartimus -- https://freesound.org/s/217542/ -- License: Attribution 4.0  
-  
-Idle sfx: rpmaisBus23 by rpmais -- https://freesound.org/s/776296/ -- License: Creative Commons 0  
-  
-Driving sfx:  Car Accelerating Slowly and Decelerating 1 (Engine and Exhaust Mix) by EvanBoyerman -- https://freesound.org/s/755996/ -- License: Attribution 4.0
-  
-Splatter sfx: Splats.wav by jjxmf -- https://freesound.org/s/551449/ -- License: Creative Commons 0  
+
 
 Music:    
-https://www.looperman.com/loops/detail/392577/simple-trap-drum-and-808-loop-free-138bpm-trap-drum-loop  
-  
-https://www.looperman.com/loops/detail/392576/2hollis-drum-and-808-loop-free-140bpm-trap-drum-loop
+

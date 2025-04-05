@@ -14,12 +14,12 @@ local tween = require 'src/libs/tween'
 -- +--------------+-------------+------+-----+-----+-----+-----+-----+-----+-----+
 local settings = {
     fullscreen = false,
-    scaleMuliplier = 4,
+    scaleMuliplier = 2,
     sceenWidth = 480,
     screenHeight = 270
 }
 
-developerMode = true
+developerMode = false
 draw_hit_boxes = false
 
 local pause_game = false
@@ -60,7 +60,7 @@ local player = {
     move_completed = true,
     width = 16,
     height = 16,
-    scaling = 1,
+    scaling = 5,
     facing_left = true,
     player_state = player_states.idle,
     distance_to_target = 0,
@@ -326,8 +326,13 @@ end
 
 
 function love.keypressed(key)
-    if key == 'e' then
-      
+    if key == '.' then
+        print("changing scene")
+        if current_scene == scenes.chipping then
+            current_scene = scenes.front_desk
+        elseif current_scene == scenes.front_desk then
+        current_scene = scenes.chipping
+        end
     end
 
     if key == 'left' then
