@@ -1,0 +1,6 @@
+TODO:
++Deliver the corpses on the station
++Mark a passenger with the mouse and he will explode
++Mark the bus with the mouse and it will explode
++Gas station
++Load off corpses
