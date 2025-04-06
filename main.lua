@@ -19,7 +19,7 @@ local settings = {
     screenHeight = 270
 }
 
-developerMode = false
+developerMode = true
 draw_hit_boxes = false
 
 local pause_game = false
@@ -146,7 +146,8 @@ function love.load()
     image_path.chip_01 = sprite_source .. "chip_01.png"
     image_path.console_closed = sprite_source ..  "console_closed_16x13_00.png"
     image_path.console_open = sprite_source .. "console_open_16x13_00.png"
-    image_path.circut_board_00 = sprite_source .. "curciut board_64x64.png"
+    -- image_path.circut_board_00 = sprite_source .. "curciut board_64x64.png"
+    image_path.circut_board_00 = sprite_source .. "circuit_board_02.png"
     image_path.customer_sprite_sheet = sprite_source .. "customer_16x16_00-Sheet.png"
 
     -- create the images  
@@ -173,7 +174,7 @@ function love.load()
     -- animations.customer_02_sleep
     -- move with tween
     -- move_bus = tween.new(2, bus, {x=bus.x_target,y=bus.y_target}, tween.easing.linear) -- how do i check that this is finished?
-    player_move = tween.new(2, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
+    player_move = tween.new(2, player, {x=player.x_target, y=player.y_target}, tween.easing.linear)
 
     -- LOAD SOUNDS
     -- sfx.driving = love.audio.newSource("src/sfx/sfx_drive_short.wav", 'static')
@@ -227,6 +228,7 @@ function love.update(dt)
                 -- check if we can start dragging
                 if chip.dragging == false and chip_collsion then
                     chip.dragging = true
+                    chip.scaling = 5
                     -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
                     mouse.mouse_x_chip_off_set = mouse_x - chip.x
                     mouse.mouse_y_chip_off_set = mouse_y - chip.y
@@ -234,6 +236,7 @@ function love.update(dt)
             else
                 -- Stop dragging when mouse released
                 chip.dragging = false
+                chip.scaling = 4
             end
 
             -- move of chip allowed..
@@ -300,13 +303,47 @@ function love.draw()
         if developerMode == true then
     
             love.graphics.print(maid64.mouse.getX() ..  "," ..  maid64.mouse.getY(), 1,1)
-            love.graphics.print("player state: " .. player.player_state, 1,16)
-            love.graphics.print("x,y state: " .. player.x_target .. "," .. player.y_target, 1,32)
+            -- love.graphics.print("player state: " .. player.player_state, 1,16)
+            -- love.graphics.print("x,y state: " .. player.x_target .. "," .. player.y_target, 1,32)
             
             -- love.graphics.print(math.floor(player.x-player.originX) ..  "," .. math.floor(player.y-player.originY), 1,58)
              --can also draw shapes and get mouse position
             -- love.graphics.rectangle("fill", maid64.mouse.getX(),  maid64.mouse.getY(), 1,1)
         end
+
+        -- draw chip placement box
+        local chip_placemenet_area = {
+            x = 115,
+            y = 20,
+            width = 125,
+            height = 75
+        }
+
+        -- draw chip placement box
+        local wire_connector_placemenet_area_1 = {
+            x = 75,
+            y = 20,
+            width = 20,
+            height = 75
+        }
+
+        -- draw chip placement box
+        local wire_connector_placemenet_area_2 = {
+            x = 75,
+            y = 110,
+            width = 165,
+            height = 30
+        }
+
+        
+        love.graphics.rectangle('line', chip_placemenet_area.x, chip_placemenet_area.y, chip_placemenet_area.width, chip_placemenet_area.height )
+        
+        -- draw connector area 1
+        love.graphics.rectangle('line', wire_connector_placemenet_area_1.x, wire_connector_placemenet_area_1.y, wire_connector_placemenet_area_1.width, wire_connector_placemenet_area_1.height )
+        
+        -- draw connector area 2
+        
+        love.graphics.rectangle('line', wire_connector_placemenet_area_2.x, wire_connector_placemenet_area_2.y, wire_connector_placemenet_area_2.width, wire_connector_placemenet_area_2.height )
     
     end
     
