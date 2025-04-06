@@ -18,6 +18,9 @@ idea dev, spriting
 2nd session (3h:27m)  
 ![](gif/hot%20copycat_first%20take.gif)  
 
+3rd session (1h:24m)  
+![](gif/hot%20copycat_new.gif)  
+
 Coding setup: VScode
 Spriting: Asesprite
 
