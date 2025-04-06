@@ -175,6 +175,8 @@ function love.load()
     -- image_path.circut_board_00 = sprite_source .. "curciut board_64x64.png"
     image_path.circut_board_00 = sprite_source .. "circuit_board_02.png"
     image_path.customer_sprite_sheet = sprite_source .. "customer_16x16_00-Sheet.png"
+    image_path.connector_yellow_00 = sprite_source .. "connector_yellow_00.png"
+    image_path.connector_grey_00 = sprite_source .. "connector_grey_00.png"
 
     -- create the images  
     -- new_img = love.graphics.newImage
@@ -185,6 +187,8 @@ function love.load()
     images.console_open = love.graphics.newImage(image_path.console_open)
     images.circut_board_00 = love.graphics.newImage(image_path.circut_board_00)
     images.customer_sprite_sheet = love.graphics.newImage(image_path.customer_sprite_sheet)
+    images.connector_yellow_00 = love.graphics.newImage(image_path.connector_yellow_00)
+    images.connector_grey_00 = love.graphics.newImage(image_path.connector_grey_00)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
@@ -343,10 +347,26 @@ function love.draw()
         -- draw connector area 1
         love.graphics.rectangle('line', wire_connector_placemenet_area_1.x, wire_connector_placemenet_area_1.y, wire_connector_placemenet_area_1.width, wire_connector_placemenet_area_1.height )
         
+        love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 5, 0, 4, 4)
+
+        love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 30, 0, 4, 4)
+        
+        love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 55, 0, 4, 4)
+
+        -- love.graphics.rectangle('fill', wire_connector_placemenet_area_1.x + 5, wire_connector_placemenet_area_1.y + 5, 4*2,4*2)
+
+        -- love.graphics.rectangle('fill', wire_connector_placemenet_area_1.x + 5, wire_connector_placemenet_area_1.y + 20, 4*2,4*2)
+
+        -- love.graphics.rectangle('fill', wire_connector_placemenet_area_1.x + 5, wire_connector_placemenet_area_1.y + 35, 4*2,4*2)
+        
         -- draw connector area 2
         
         love.graphics.rectangle('line', wire_connector_placemenet_area_2.x, wire_connector_placemenet_area_2.y, wire_connector_placemenet_area_2.width, wire_connector_placemenet_area_2.height )
-    
+        love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 5, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
+
+        love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_2.x + 30, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
+        
+        love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 55, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
     end
     
     if pause_game then
