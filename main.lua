@@ -85,9 +85,35 @@ local chip = {
     y_placement_span_min = 3,
     y_placement_span_max = 16,
     collision = false,
-    dragging = false
+    dragging = false,
+    placed = false
 
 }
+
+ -- draw chip placement box
+ local chip_placemenet_area = {
+    x = 115,
+    y = 20,
+    width = 125,
+    height = 75
+}
+
+-- draw chip placement box
+local wire_connector_placemenet_area_1 = {
+    x = 75,
+    y = 20,
+    width = 20,
+    height = 75
+}
+
+-- draw chip placement box
+local wire_connector_placemenet_area_2 = {
+    x = 75,
+    y = 110,
+    width = 165,
+    height = 30
+}
+
 
 local enemies = {
 
@@ -311,31 +337,7 @@ function love.draw()
             -- love.graphics.rectangle("fill", maid64.mouse.getX(),  maid64.mouse.getY(), 1,1)
         end
 
-        -- draw chip placement box
-        local chip_placemenet_area = {
-            x = 115,
-            y = 20,
-            width = 125,
-            height = 75
-        }
-
-        -- draw chip placement box
-        local wire_connector_placemenet_area_1 = {
-            x = 75,
-            y = 20,
-            width = 20,
-            height = 75
-        }
-
-        -- draw chip placement box
-        local wire_connector_placemenet_area_2 = {
-            x = 75,
-            y = 110,
-            width = 165,
-            height = 30
-        }
-
-        
+        --draw place where we can place our chip        
         love.graphics.rectangle('line', chip_placemenet_area.x, chip_placemenet_area.y, chip_placemenet_area.width, chip_placemenet_area.height )
         
         -- draw connector area 1
@@ -386,6 +388,10 @@ function love.keypressed(key)
             print("resume game")
             pause_game = false
         end
+    end
+
+    if key == "," then
+        reset_chip()
     end
 
     -- toggle fullscreen
@@ -482,6 +488,20 @@ function collision_check(object_a, object_b)
                         a_top < b_bottom
 
     return isColliding
+end
+
+function reset_chip()
+    chip.x = 262
+    chip.y = 7
+    chip.scaling = 4
+    chip.width = 7
+    chip.height = 7
+    chip.x_placement_span_min = 262
+    chip.y_placement_span_min = 3
+    chip.y_placement_span_max = 16
+    chip.collision = false
+    chip.dragging = false
+    chip.placed = false
 end
 
 
