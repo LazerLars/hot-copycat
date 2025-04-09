@@ -150,6 +150,8 @@ local mouse_y = 0
 
 local flag_dragging_connector = nil
 
+local flag_dragging_wire = nil
+
 function love.load()
     
     math.randomseed( os.time() )
@@ -233,6 +235,13 @@ function love.load()
     add_connector(images.connector_grey_00)
     add_connector(images.connector_grey_00)
 
+    add_wire(1)
+    add_wire(2)
+    add_wire(3)
+    add_wire(4)
+    add_wire(5)
+    add_wire(6)
+
 
 
     mouse_x = maid64.mouse.getX()
@@ -271,6 +280,10 @@ function love.update(dt)
             move_chip_on_mouse_click()
             
             move_connector_on_mouse_click()
+
+            move_wire_start_on_mouse_click()
+
+            move_wire_end_on_mouse_click()
             
         end
         
@@ -320,22 +333,29 @@ function love.draw()
             for key, connector in pairs(connectors_list) do
                 love.graphics.draw(connector.sprite, connector.x, connector.y, 0, connector.scaling, connector.scaling)
             end
-            -- red
+            -- red 1 
             -- 241/255, 36/255, 17/255
-            -- pink
+            -- pink 2
             -- 255/255, 38,255, 116/255
-            -- yellow
+            -- yellow 3
             -- 255/255, 209/255, 0
-            -- green
+            -- green 4
             -- 16/255, 210/255, 17/255
-            -- blue
+            -- blue 5
             -- 25/255, 134/255, 242/255
-            -- grey
+            -- grey 6
             -- 195/255, 195/255, 195/255
-            love.graphics.setLineWidth(6)
-            love.graphics.setColor(241/255, 36/255, 17/255)
-            love.graphics.line(260, 100, 260, 200)
-            love.graphics.setColor(1,1,1)
+            -- love.graphics.setLineWidth(6)
+            -- love.graphics.setColor(241/255, 36/255, 17/255) -- red
+            -- love.graphics.line(260, 100, 260, 200)
+            -- love.graphics.setColor(1,1,1)
+            for key, wire in pairs(wires_list) do
+                set_color(wire.color_numb)
+                love.graphics.setLineWidth(wire.line_width)
+                love.graphics.line(wire.line_start.x, wire.line_start.y, wire.line_end.x, wire.line_end.y)
+                love.graphics.setLineWidth(1)
+                reset_color()
+            end
         end
 
 
@@ -604,3 +624,134 @@ function move_connector_on_mouse_click()
     end
 end
 
+function move_wire_start_on_mouse_click()
+    
+    -- LOOP THROUGH CONNECTORS, and allow the user to click and move it
+    for key, wire in pairs(wires_list) do
+        -- check if the mouse click a connector, so we can move it
+        local wire_collsion = collision_check(mouse, wire.line_start)
+
+        if love.mouse.isDown(1) then
+            -- Only start dragging if nothing else is being dragged
+            if wire.line_start.dragging == false and wire_collsion and flag_dragging_wire == nil then -- flag_dragging_connector this makes us only able to select one connector at a time
+                wire.line_start.dragging = true
+                wire.line_start.scaling = 5 -- scale the size of the connector when clicked
+                flag_dragging_connector = wire  -- Mark this one as being dragged, this makes us only able to select one connector at a time
+                mouse.mouse_x_chip_off_set = mouse_x - wire.line_start.x -- create a offset so we can have the mouse being in the same place as we select the item when moving it
+                mouse.mouse_y_chip_off_set = mouse_y - wire.line_start.y -- create a offset so we can have the mouse being in the same place as we select the item when moving it
+            end
+        else
+            -- reset settings and scaling
+            wire.line_start.dragging = false
+            wire.line_start.scaling = 4
+        end
+        
+        if wire.line_start.dragging then
+            -- change the actual poisiton of the connector
+            wire.line_start.x = mouse_x - mouse.mouse_x_chip_off_set
+            wire.line_start.y = mouse_y - mouse.mouse_y_chip_off_set
+        end
+    end
+    -- Reset dragging flag after the loop ends (on mouse release)
+    if not love.mouse.isDown(1) then
+        flag_dragging_connector = nil
+    end
+end
+
+function move_wire_end_on_mouse_click()
+    
+    -- LOOP THROUGH CONNECTORS, and allow the user to click and move it
+    for key, wire in pairs(wires_list) do
+        -- check if the mouse click a connector, so we can move it
+        local wire_collsion = collision_check(mouse, wire.line_end)
+
+        if love.mouse.isDown(1) then
+            -- Only start dragging if nothing else is being dragged
+            if wire.line_end.dragging == false and wire_collsion and flag_dragging_wire == nil then -- flag_dragging_connector this makes us only able to select one connector at a time
+                wire.line_end.dragging = true
+                wire.line_end.scaling = 5 -- scale the size of the connector when clicked
+                flag_dragging_connector = wire  -- Mark this one as being dragged, this makes us only able to select one connector at a time
+                mouse.mouse_x_chip_off_set = mouse_x - wire.line_end.x -- create a offset so we can have the mouse being in the same place as we select the item when moving it
+                mouse.mouse_y_chip_off_set = mouse_y - wire.line_end.y -- create a offset so we can have the mouse being in the same place as we select the item when moving it
+            end
+        else
+            -- reset settings and scaling
+            wire.line_end.dragging = false
+            wire.line_end.scaling = 4
+        end
+        
+        if wire.line_end.dragging then
+            -- change the actual poisiton of the connector
+            wire.line_end.x = mouse_x - mouse.mouse_x_chip_off_set
+            wire.line_end.y = mouse_y - mouse.mouse_y_chip_off_set
+        end
+    end
+    -- Reset dragging flag after the loop ends (on mouse release)
+    if not love.mouse.isDown(1) then
+        flag_dragging_connector = nil
+    end
+end
+
+
+function add_wire(color_numb)
+    local wires_list_length = #wires_list
+    local spacing_x = 25
+
+    local wire = {
+        color_numb = color_numb,
+        line_width = 6,
+        line_start = {
+            x = 270,
+            y = 115,
+            scaling = 2,
+            width = 6,
+            height = 6,
+            collision = false,
+            dragging = false,
+            placed = false,
+        },
+        line_end = {
+            x = 270,
+            y = 250,
+            scaling = 2,
+            width = 6,
+            height = 6,
+            collision = false,
+            dragging = false,
+            placed = false,
+        }
+    }
+
+    if wires_list_length> 0 then
+        wire.line_start.x = wire.line_start.x + (spacing_x * wires_list_length)
+        wire.line_end.x = wire.line_end.x + (spacing_x * wires_list_length)
+    end
+
+    table.insert(wires_list, wire)
+end
+
+function set_color(color_numb)
+    
+    if color_numb == 1 then
+        love.graphics.setColor(241/255, 36/255, 17/255) -- red
+    end
+    if color_numb == 2 then
+        love.graphics.setColor(255/255, 38,255, 116/255) -- pink
+    end
+    if color_numb == 3 then
+        love.graphics.setColor(255/255, 209/255, 0) -- yellow
+    end
+    if color_numb == 4 then
+        love.graphics.setColor(16/255, 210/255, 17/255) -- green
+    end
+    if color_numb == 5 then
+        love.graphics.setColor(25/255, 134/255, 242/255) -- blue
+    end
+    if color_numb == 6 then
+        love.graphics.setColor(195/255, 195/255, 195/255) -- grey
+    end
+end
+
+function reset_color()
+    love.graphics.setColor(1,1,1)
+end
