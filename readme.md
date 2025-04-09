@@ -20,6 +20,10 @@ idea dev, spriting
 
 3rd session (1h:24m)  
 ![](gif/hot%20copycat_new.gif)  
+  
+4th session (2h:38m)  
+![](gif/hot_copy_cat_4th_.gif)  
+
 
 Coding setup: VScode
 Spriting: Asesprite

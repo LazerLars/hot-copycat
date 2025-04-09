@@ -237,6 +237,7 @@ function love.load()
     add_connector(images.connector_grey_00)
     add_connector(images.connector_grey_00)
 
+    -- add wires
     add_wire(1)
     add_wire(2)
     add_wire(3)
@@ -428,6 +429,7 @@ function love.keypressed(key)
     if key == "," then
         reset_chip()
         reset_connectors()
+        reset_wires()
     end
 
     -- toggle fullscreen
@@ -713,6 +715,18 @@ function add_wire(color_numb)
     end
 
     table.insert(wires_list, wire)
+end
+
+function reset_wires()
+    wires_list = {}
+
+    add_wire(1)
+    add_wire(2)
+    add_wire(3)
+    add_wire(4)
+    add_wire(5)
+    add_wire(6)
+    
 end
 
 function set_color(color_numb)
