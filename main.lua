@@ -114,6 +114,8 @@ local wire_connector_placemenet_area_2 = {
     height = 30
 }
 
+local connectors_list = {}
+
 
 local enemies = {
 
@@ -218,6 +220,13 @@ function love.load()
     
     -- set initial position of the buttons
     current_scene = scenes.chipping
+    add_connector(images.connector_yellow_00)
+    add_connector(images.connector_yellow_00)
+    add_connector(images.connector_yellow_00)
+    add_connector(images.connector_grey_00)
+    add_connector(images.connector_grey_00)
+    add_connector(images.connector_grey_00)
+
 
     mouse_x = maid64.mouse.getX()
     mouse_y = maid64.mouse.getY()
@@ -346,7 +355,8 @@ function love.draw()
         
         -- draw connector area 1
         love.graphics.rectangle('line', wire_connector_placemenet_area_1.x, wire_connector_placemenet_area_1.y, wire_connector_placemenet_area_1.width, wire_connector_placemenet_area_1.height )
-        
+         
+
         love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 5, 0, 4, 4)
 
         love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 30, 0, 4, 4)
@@ -367,6 +377,11 @@ function love.draw()
         love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_2.x + 30, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
         
         love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 55, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
+
+        for key, connector in pairs(connectors_list) do
+            love.graphics.draw(connector.sprite, connector.x, connector.y, 0, connector.scaling, connector.scaling)
+            
+        end
     end
     
     if pause_game then
@@ -522,6 +537,30 @@ function reset_chip()
     chip.collision = false
     chip.dragging = false
     chip.placed = false
+end
+
+function add_connector(sprite)
+    local connectors_length = #connectors_list
+    local spacing_x = 20
+    local connector = {
+        x = 262,
+        y = 50,
+        scaling = 4,
+        width = 4,
+        height = 4,
+        -- x_placement_span_min = 262,
+        -- y_placement_span_min = 3,
+        -- y_placement_span_max = 16,
+        collision = false,
+        dragging = false,
+        placed = false,
+        sprite = sprite
+    }
+    if #connectors_list > 0 then
+        connector.x = connector.x + (spacing_x * connectors_length)
+    end
+
+    table.insert(connectors_list, connector)
 end
 
 
