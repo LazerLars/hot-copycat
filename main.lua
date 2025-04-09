@@ -320,6 +320,22 @@ function love.draw()
             for key, connector in pairs(connectors_list) do
                 love.graphics.draw(connector.sprite, connector.x, connector.y, 0, connector.scaling, connector.scaling)
             end
+            -- red
+            -- 241/255, 36/255, 17/255
+            -- pink
+            -- 255/255, 38,255, 116/255
+            -- yellow
+            -- 255/255, 209/255, 0
+            -- green
+            -- 16/255, 210/255, 17/255
+            -- blue
+            -- 25/255, 134/255, 242/255
+            -- grey
+            -- 195/255, 195/255, 195/255
+            love.graphics.setLineWidth(6)
+            love.graphics.setColor(241/255, 36/255, 17/255)
+            love.graphics.line(260, 100, 260, 200)
+            love.graphics.setColor(1,1,1)
         end
 
 
