@@ -343,28 +343,13 @@ function love.draw()
             for key, connector in pairs(connectors_list) do
                 love.graphics.draw(connector.sprite, connector.x, connector.y, 0, connector.scaling, connector.scaling)
             end
-            -- red 1 
-            -- 241/255, 36/255, 17/255
-            -- pink 2
-            -- 255/255, 38,255, 116/255
-            -- yellow 3
-            -- 255/255, 209/255, 0
-            -- green 4
-            -- 16/255, 210/255, 17/255
-            -- blue 5
-            -- 25/255, 134/255, 242/255
-            -- grey 6
-            -- 195/255, 195/255, 195/255
-            -- love.graphics.setLineWidth(6)
-            -- love.graphics.setColor(241/255, 36/255, 17/255) -- red
-            -- love.graphics.line(260, 100, 260, 200)
-            -- love.graphics.setColor(1,1,1)
+            
             for key, wire in pairs(wires_list) do
                 set_color(wire.color_numb)
                 love.graphics.rectangle('line', wire.line_start.x, wire.line_start.y, wire.line_start.height, wire.line_start.width, 0, wire.line_start.scaling, wire.line_start.scaling)
                 love.graphics.rectangle('line', wire.line_end.x, wire.line_end.y, wire.line_end.height, wire.line_end.width, 0, wire.line_end.scaling, wire.line_end.scaling)
                 love.graphics.setLineWidth(wire.line_width)
-                love.graphics.line(wire.line_start.x, wire.line_start.y, wire.line_end.x, wire.line_end.y)
+                love.graphics.line(wire.line_start.x + wire.line_offset, wire.line_start.y + wire.line_offset, wire.line_end.x + wire.line_offset, wire.line_end.y + wire.line_offset)
                 love.graphics.setLineWidth(1)
                 reset_color()
             end
@@ -683,12 +668,13 @@ end
 function add_wire(color_numb)
     local wires_list_length = #wires_list
     local spacing_x = 25
-
+    local x = 265
     local wire = {
         color_numb = color_numb,
-        line_width = 6,
+        line_width = 4,
+        line_offset = 5, -- this is used to offset the line to make the hit box more accurate
         line_start = {
-            x = 270,
+            x = x,
             y = 115,
             scaling = 2,
             width = 10,
@@ -698,7 +684,7 @@ function add_wire(color_numb)
             placed = false,
         },
         line_end = {
-            x = 270,
+            x = x,
             y = 250,
             scaling = 2,
             width = 10,
@@ -730,24 +716,24 @@ function reset_wires()
 end
 
 function set_color(color_numb)
-    
+    local transparency = 0.7
     if color_numb == 1 then
-        love.graphics.setColor(241/255, 36/255, 17/255) -- red
+        love.graphics.setColor(241/255, 36/255, 17/255, transparency) -- red
     end
     if color_numb == 2 then
-        love.graphics.setColor(255/255, 38,255, 116/255) -- pink
+        love.graphics.setColor(255/255, 38,255, 116/255, transparency) -- pink
     end
     if color_numb == 3 then
-        love.graphics.setColor(255/255, 209/255, 0) -- yellow
+        love.graphics.setColor(255/255, 209/255, 0, transparency) -- yellow
     end
     if color_numb == 4 then
-        love.graphics.setColor(16/255, 210/255, 17/255) -- green
+        love.graphics.setColor(16/255, 210/255, 17/255, transparency) -- green
     end
     if color_numb == 5 then
-        love.graphics.setColor(25/255, 134/255, 242/255) -- blue
+        love.graphics.setColor(25/255, 134/255, 242/255, transparency) -- blue
     end
     if color_numb == 6 then
-        love.graphics.setColor(195/255, 195/255, 195/255) -- grey
+        love.graphics.setColor(195/255, 195/255, 195/255, transparency) -- grey
     end
 end
 
