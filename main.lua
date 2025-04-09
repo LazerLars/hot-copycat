@@ -78,8 +78,8 @@ local circut_board = {
 local chip = {
     x = 262,
     y = 7,
-    scaling = 7,
-    scaling_baseline = 7,
+    scaling = 6,
+    scaling_baseline = 6,
     width = 7,
     height = 7,
     x_placement_span_min = 262,
@@ -144,6 +144,9 @@ local timer = 0
 local mouse_x = 0
 local mouse_y = 0
 
+-- flag to detect if we drag a connector
+
+local flag_dragging_connector = nil
 
 function love.load()
     
@@ -229,6 +232,7 @@ function love.load()
     add_connector(images.connector_grey_00)
 
 
+
     mouse_x = maid64.mouse.getX()
     mouse_y = maid64.mouse.getY()
     mouse.x = mouse_x
@@ -286,30 +290,35 @@ function love.update(dt)
                 chip.y = mouse_y - mouse.mouse_y_chip_off_set
             end
 
+            -- LOOP THROUGH CONNECTORS
             for key, connector in pairs(connectors_list) do
                 local connector_collsion = collision_check(mouse, connector)
+
                 if love.mouse.isDown(1) then
-                    -- check if we can start dragging
-                    if connector.dragging == false and connector_collsion then
+                    -- Only start dragging if nothing else is being dragged
+                    if connector.dragging == false and connector_collsion and flag_dragging_connector == nil then
                         connector.dragging = true
                         connector.scaling = 5
-                        -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
+                        flag_dragging_connector = connector  -- Mark this one as being dragged
                         mouse.mouse_x_chip_off_set = mouse_x - connector.x
                         mouse.mouse_y_chip_off_set = mouse_y - connector.y
                     end
                 else
-                    -- Stop dragging when mouse released
                     connector.dragging = false
                     connector.scaling = 4
                 end
-    
-                -- move of chip allowed..
+
                 if connector.dragging then
-                    -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
                     connector.x = mouse_x - mouse.mouse_x_chip_off_set
                     connector.y = mouse_y - mouse.mouse_y_chip_off_set
                 end
             end
+
+            -- Reset dragging flag after the loop ends (on mouse release)
+            if not love.mouse.isDown(1) then
+                flag_dragging_connector = nil
+            end
+            
         end
       
         
@@ -362,6 +371,11 @@ function love.draw()
         if current_scene == scenes.chipping then
             love.graphics.draw(images.circut_board_00, circut_board.x, circut_board.y, 0, circut_board.scaling, circut_board.scaling)
             love.graphics.draw(images.chip_01, chip.x, chip.y, 0, chip.scaling, chip.scaling)
+
+            for key, connector in pairs(connectors_list) do
+                love.graphics.draw(connector.sprite, connector.x, connector.y, 0, connector.scaling, connector.scaling)
+                
+            end
         end
 
 
@@ -403,11 +417,8 @@ function love.draw()
         -- love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_2.x + 30, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
         
         -- love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 55, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
-
-        for key, connector in pairs(connectors_list) do
-            love.graphics.draw(connector.sprite, connector.x, connector.y, 0, connector.scaling, connector.scaling)
-            
-        end
+        -- draw connectors
+        
     end
     
     if pause_game then
