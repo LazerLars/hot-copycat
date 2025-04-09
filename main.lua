@@ -281,9 +281,7 @@ function love.update(dt)
             
             move_connector_on_mouse_click()
 
-            move_wire_start_on_mouse_click()
-
-            move_wire_end_on_mouse_click()
+            move_wire_on_mouse_click()
             
         end
         
@@ -624,74 +622,44 @@ function move_connector_on_mouse_click()
     end
 end
 
-function move_wire_start_on_mouse_click()
-    
-    -- LOOP THROUGH CONNECTORS, and allow the user to click and move it
-    for key, wire in pairs(wires_list) do
-        -- check if the mouse click a connector, so we can move it
-        local wire_collsion = collision_check(mouse, wire.line_start)
+function handle_wire_point_drag(endpoint)
+    local is_hovered = collision_check(mouse, endpoint)
 
-        if love.mouse.isDown(1) then
-            -- Only start dragging if nothing else is being dragged
-            if wire.line_start.dragging == false and wire_collsion and flag_dragging_wire == nil then -- flag_dragging_connector this makes us only able to select one connector at a time
-                wire.line_start.dragging = true
-                wire.line_start.scaling = 5 -- scale the size of the connector when clicked
-                flag_dragging_connector = wire  -- Mark this one as being dragged, this makes us only able to select one connector at a time
-                mouse.mouse_x_chip_off_set = mouse_x - wire.line_start.x -- create a offset so we can have the mouse being in the same place as we select the item when moving it
-                mouse.mouse_y_chip_off_set = mouse_y - wire.line_start.y -- create a offset so we can have the mouse being in the same place as we select the item when moving it
-            end
-        else
-            -- reset settings and scaling
-            wire.line_start.dragging = false
-            wire.line_start.scaling = 4
+    if love.mouse.isDown(1) then
+        if not endpoint.dragging and is_hovered and flag_dragging_wire == nil then
+            endpoint.dragging = true
+            endpoint.scaling = 5
+            flag_dragging_wire = endpoint -- This is now specific to the endpoint (start or end)
+            mouse.mouse_x_chip_off_set = mouse_x - endpoint.x
+            mouse.mouse_y_chip_off_set = mouse_y - endpoint.y
         end
-        
-        if wire.line_start.dragging then
-            -- change the actual poisiton of the connector
-            wire.line_start.x = mouse_x - mouse.mouse_x_chip_off_set
-            wire.line_start.y = mouse_y - mouse.mouse_y_chip_off_set
-        end
+    else
+        endpoint.dragging = false
+        endpoint.scaling = 2 -- back to normal
     end
-    -- Reset dragging flag after the loop ends (on mouse release)
-    if not love.mouse.isDown(1) then
-        flag_dragging_connector = nil
+
+    if endpoint.dragging then
+        endpoint.x = mouse_x - mouse.mouse_x_chip_off_set
+        endpoint.y = mouse_y - mouse.mouse_y_chip_off_set
     end
 end
 
-function move_wire_end_on_mouse_click()
-    
-    -- LOOP THROUGH CONNECTORS, and allow the user to click and move it
-    for key, wire in pairs(wires_list) do
-        -- check if the mouse click a connector, so we can move it
-        local wire_collsion = collision_check(mouse, wire.line_end)
-
-        if love.mouse.isDown(1) then
-            -- Only start dragging if nothing else is being dragged
-            if wire.line_end.dragging == false and wire_collsion and flag_dragging_wire == nil then -- flag_dragging_connector this makes us only able to select one connector at a time
-                wire.line_end.dragging = true
-                wire.line_end.scaling = 5 -- scale the size of the connector when clicked
-                flag_dragging_connector = wire  -- Mark this one as being dragged, this makes us only able to select one connector at a time
-                mouse.mouse_x_chip_off_set = mouse_x - wire.line_end.x -- create a offset so we can have the mouse being in the same place as we select the item when moving it
-                mouse.mouse_y_chip_off_set = mouse_y - wire.line_end.y -- create a offset so we can have the mouse being in the same place as we select the item when moving it
-            end
-        else
-            -- reset settings and scaling
-            wire.line_end.dragging = false
-            wire.line_end.scaling = 4
+function move_wire_on_mouse_click()
+    for _, wire in pairs(wires_list) do
+        -- Important: only one endpoint can react at a time
+        if flag_dragging_wire == wire.line_start or flag_dragging_wire == nil then
+            handle_wire_point_drag(wire.line_start)
         end
-        
-        if wire.line_end.dragging then
-            -- change the actual poisiton of the connector
-            wire.line_end.x = mouse_x - mouse.mouse_x_chip_off_set
-            wire.line_end.y = mouse_y - mouse.mouse_y_chip_off_set
+
+        if flag_dragging_wire == wire.line_end or flag_dragging_wire == nil then
+            handle_wire_point_drag(wire.line_end)
         end
     end
-    -- Reset dragging flag after the loop ends (on mouse release)
+
     if not love.mouse.isDown(1) then
-        flag_dragging_connector = nil
+        flag_dragging_wire = nil
     end
 end
-
 
 function add_wire(color_numb)
     local wires_list_length = #wires_list
