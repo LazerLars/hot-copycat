@@ -284,6 +284,31 @@ function love.update(dt)
                 chip.x = mouse_x - mouse.mouse_x_chip_off_set
                 chip.y = mouse_y - mouse.mouse_y_chip_off_set
             end
+
+            for key, connector in pairs(connectors_list) do
+                local connector_collsion = collision_check(mouse, connector)
+                if love.mouse.isDown(1) then
+                    -- check if we can start dragging
+                    if connector.dragging == false and connector_collsion then
+                        connector.dragging = true
+                        connector.scaling = 5
+                        -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
+                        mouse.mouse_x_chip_off_set = mouse_x - connector.x
+                        mouse.mouse_y_chip_off_set = mouse_y - connector.y
+                    end
+                else
+                    -- Stop dragging when mouse released
+                    connector.dragging = false
+                    connector.scaling = 4
+                end
+    
+                -- move of chip allowed..
+                if connector.dragging then
+                    -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
+                    connector.x = mouse_x - mouse.mouse_x_chip_off_set
+                    connector.y = mouse_y - mouse.mouse_y_chip_off_set
+                end
+            end
         end
       
         
