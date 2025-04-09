@@ -115,7 +115,9 @@ local wire_connector_placemenet_area_2 = {
     height = 30
 }
 
-local connectors_list = {}
+local connectors_list = {} -- list to hold the connectors we need to solder the wire on
+
+local wires_list = {}
 
 
 local enemies = {
@@ -288,10 +290,6 @@ function love.draw()
     
     love.graphics.setLineStyle('rough')
 
-
-
-  
-    
     if pause_game == false then
         if current_scene == scenes.front_desk then
             if player.player_state == player_states.idle then
@@ -312,12 +310,15 @@ function love.draw()
         
         
         if current_scene == scenes.chipping then
+            -- draw the circuit board
             love.graphics.draw(images.circut_board_00, circut_board.x, circut_board.y, 0, circut_board.scaling, circut_board.scaling)
+
+            -- draw the chip
             love.graphics.draw(images.chip_01, chip.x, chip.y, 0, chip.scaling, chip.scaling)
 
+            -- draw all connectors
             for key, connector in pairs(connectors_list) do
                 love.graphics.draw(connector.sprite, connector.x, connector.y, 0, connector.scaling, connector.scaling)
-                
             end
         end
 
@@ -333,34 +334,6 @@ function love.draw()
             -- love.graphics.rectangle("fill", maid64.mouse.getX(),  maid64.mouse.getY(), 1,1)
         end
 
-        --draw place where we can place our chip        
-        -- love.graphics.rectangle('line', chip_placemenet_area.x, chip_placemenet_area.y, chip_placemenet_area.width, chip_placemenet_area.height )
-        
-        -- draw connector area 1
-        -- love.graphics.rectangle('line', wire_connector_placemenet_area_1.x, wire_connector_placemenet_area_1.y, wire_connector_placemenet_area_1.width, wire_connector_placemenet_area_1.height )
-         
-
-        -- love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 5, 0, 4, 4)
-
-        -- love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 30, 0, 4, 4)
-        
-        -- love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 55, 0, 4, 4)
-
-        -- love.graphics.rectangle('fill', wire_connector_placemenet_area_1.x + 5, wire_connector_placemenet_area_1.y + 5, 4*2,4*2)
-
-        -- love.graphics.rectangle('fill', wire_connector_placemenet_area_1.x + 5, wire_connector_placemenet_area_1.y + 20, 4*2,4*2)
-
-        -- love.graphics.rectangle('fill', wire_connector_placemenet_area_1.x + 5, wire_connector_placemenet_area_1.y + 35, 4*2,4*2)
-        
-        -- draw connector area 2
-        
-        -- love.graphics.rectangle('line', wire_connector_placemenet_area_2.x, wire_connector_placemenet_area_2.y, wire_connector_placemenet_area_2.width, wire_connector_placemenet_area_2.height )
-        -- love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 5, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
-
-        -- love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_2.x + 30, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
-        
-        -- love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 55, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
-        -- draw connectors
         
     end
     
