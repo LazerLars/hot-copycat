@@ -374,8 +374,6 @@ function love.draw()
 
     end
 
-
-
     maid64.finish()--finishes the maid64 process
 end
 
@@ -589,37 +587,37 @@ function move_connector_on_mouse_click()
     end
 end
 
-function handle_wire_point_drag(endpoint)
-    local mouse_wire_collision = collision_check(mouse, endpoint)
+function move_wire_start_or_end_point_logic(wire_end_point)
+    local mouse_wire_collision = collision_check(mouse, wire_end_point)
 
     if love.mouse.isDown(1) then
-        if not endpoint.dragging and mouse_wire_collision and flag_dragging_wire == nil then
-            endpoint.dragging = true
-            endpoint.scaling = 5
-            flag_dragging_wire = endpoint -- This is now specific to the endpoint (start or end)
-            mouse.mouse_x_chip_off_set = mouse_x - endpoint.x
-            mouse.mouse_y_chip_off_set = mouse_y - endpoint.y
+        if not wire_end_point.dragging and mouse_wire_collision and flag_dragging_wire == nil then
+            wire_end_point.dragging = true
+            wire_end_point.scaling = 5
+            flag_dragging_wire = wire_end_point -- This is now specific to the endpoint (start or end)
+            mouse.mouse_x_chip_off_set = mouse_x - wire_end_point.x
+            mouse.mouse_y_chip_off_set = mouse_y - wire_end_point.y
         end
     else
-        endpoint.dragging = false
-        endpoint.scaling = 2 -- back to normal
+        wire_end_point.dragging = false
+        wire_end_point.scaling = 2 -- back to normal
     end
 
-    if endpoint.dragging then
-        endpoint.x = mouse_x - mouse.mouse_x_chip_off_set
-        endpoint.y = mouse_y - mouse.mouse_y_chip_off_set
+    if wire_end_point.dragging then
+        wire_end_point.x = mouse_x - mouse.mouse_x_chip_off_set
+        wire_end_point.y = mouse_y - mouse.mouse_y_chip_off_set
     end
 end
 
 function move_wire_on_mouse_click()
-    for _, wire in pairs(wires_list) do
+    for key, wire in pairs(wires_list) do
         -- Important: only one endpoint can react at a time
         if flag_dragging_wire == wire.line_start or flag_dragging_wire == nil then
-            handle_wire_point_drag(wire.line_start)
+            move_wire_start_or_end_point_logic(wire.line_start)
         end
 
         if flag_dragging_wire == wire.line_end or flag_dragging_wire == nil then
-            handle_wire_point_drag(wire.line_end)
+            move_wire_start_or_end_point_logic(wire.line_end)
         end
     end
 
