@@ -148,6 +148,8 @@ local mouse_y = 0
 
 -- flag to detect if we drag a connector
 
+local flag_dragging_chip = nil
+
 local flag_dragging_connector = nil
 
 local flag_dragging_wire = nil
@@ -277,11 +279,20 @@ function love.update(dt)
         end
 
         if current_scene == scenes.chipping then
-            move_chip_on_mouse_click()
+            -- ensure we only move one objeect at a time
+            if flag_dragging_connector == nil and flag_dragging_wire == nil then
+                move_chip_on_mouse_click()
+            end
             
-            move_connector_on_mouse_click()
+            if flag_dragging_chip == nil and flag_dragging_wire == nil then
+                move_connector_on_mouse_click()
+            end
 
-            move_wire_on_mouse_click()
+            if flag_dragging_chip == nil and flag_dragging_connector == nil then
+                move_wire_on_mouse_click()
+            end
+
+
             
         end
         
@@ -535,6 +546,7 @@ function move_chip_on_mouse_click()
                 if chip.dragging == false and chip_collsion then
                     chip.dragging = true
                     chip.scaling = 8
+                    flag_dragging_chip = chip 
                     -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
                     mouse.mouse_x_chip_off_set = mouse_x - chip.x
                     mouse.mouse_y_chip_off_set = mouse_y - chip.y
@@ -543,6 +555,7 @@ function move_chip_on_mouse_click()
                 -- Stop dragging when mouse released
                 chip.dragging = false
                 chip.scaling = chip.scaling_baseline
+                flag_dragging_chip = nil  -- Reset the flag
             end
 
             -- move of chip allowed..
@@ -551,41 +564,6 @@ function move_chip_on_mouse_click()
                 chip.x = mouse_x - mouse.mouse_x_chip_off_set
                 chip.y = mouse_y - mouse.mouse_y_chip_off_set
             end
-end
-
-function add_connector(sprite)
-    local connectors_length = #connectors_list
-    local spacing_x = 25
-    local connector = {
-        x = 262,
-        y = 70,
-        scaling = 4,
-        width = 4,
-        height = 4,
-        -- x_placement_span_min = 262,
-        -- y_placement_span_min = 3,
-        -- y_placement_span_max = 16,
-        collision = false,
-        dragging = false,
-        placed = false,
-        sprite = sprite
-    }
-    if #connectors_list > 0 then
-        connector.x = connector.x + (spacing_x * connectors_length)
-    end
-
-    table.insert(connectors_list, connector)
-end
-
-function reset_connectors()
-    connectors_list  = {}
-
-    add_connector(images.connector_yellow_00)
-    add_connector(images.connector_yellow_00)
-    add_connector(images.connector_yellow_00)
-    add_connector(images.connector_grey_00)
-    add_connector(images.connector_grey_00)
-    add_connector(images.connector_grey_00)
 end
 
 function move_connector_on_mouse_click()
@@ -660,6 +638,43 @@ function move_wire_on_mouse_click()
         flag_dragging_wire = nil
     end
 end
+
+function add_connector(sprite)
+    local connectors_length = #connectors_list
+    local spacing_x = 25
+    local connector = {
+        x = 262,
+        y = 70,
+        scaling = 4,
+        width = 4,
+        height = 4,
+        -- x_placement_span_min = 262,
+        -- y_placement_span_min = 3,
+        -- y_placement_span_max = 16,
+        collision = false,
+        dragging = false,
+        placed = false,
+        sprite = sprite
+    }
+    if #connectors_list > 0 then
+        connector.x = connector.x + (spacing_x * connectors_length)
+    end
+
+    table.insert(connectors_list, connector)
+end
+
+function reset_connectors()
+    connectors_list  = {}
+
+    add_connector(images.connector_yellow_00)
+    add_connector(images.connector_yellow_00)
+    add_connector(images.connector_yellow_00)
+    add_connector(images.connector_grey_00)
+    add_connector(images.connector_grey_00)
+    add_connector(images.connector_grey_00)
+end
+
+
 
 function add_wire(color_numb)
     local wires_list_length = #wires_list
