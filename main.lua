@@ -360,6 +360,8 @@ function love.draw()
             -- love.graphics.setColor(1,1,1)
             for key, wire in pairs(wires_list) do
                 set_color(wire.color_numb)
+                love.graphics.rectangle('line', wire.line_start.x, wire.line_start.y, wire.line_start.height, wire.line_start.width, 0, wire.line_start.scaling, wire.line_start.scaling)
+                love.graphics.rectangle('line', wire.line_end.x, wire.line_end.y, wire.line_end.height, wire.line_end.width, 0, wire.line_end.scaling, wire.line_end.scaling)
                 love.graphics.setLineWidth(wire.line_width)
                 love.graphics.line(wire.line_start.x, wire.line_start.y, wire.line_end.x, wire.line_end.y)
                 love.graphics.setLineWidth(1)
@@ -601,10 +603,10 @@ function move_connector_on_mouse_click()
 end
 
 function handle_wire_point_drag(endpoint)
-    local is_hovered = collision_check(mouse, endpoint)
+    local mouse_wire_collision = collision_check(mouse, endpoint)
 
     if love.mouse.isDown(1) then
-        if not endpoint.dragging and is_hovered and flag_dragging_wire == nil then
+        if not endpoint.dragging and mouse_wire_collision and flag_dragging_wire == nil then
             endpoint.dragging = true
             endpoint.scaling = 5
             flag_dragging_wire = endpoint -- This is now specific to the endpoint (start or end)
@@ -687,8 +689,8 @@ function add_wire(color_numb)
             x = 270,
             y = 115,
             scaling = 2,
-            width = 6,
-            height = 6,
+            width = 10,
+            height = 10,
             collision = false,
             dragging = false,
             placed = false,
@@ -697,8 +699,8 @@ function add_wire(color_numb)
             x = 270,
             y = 250,
             scaling = 2,
-            width = 6,
-            height = 6,
+            width = 10,
+            height = 10,
             collision = false,
             dragging = false,
             placed = false,
