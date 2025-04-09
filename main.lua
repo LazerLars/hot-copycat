@@ -78,7 +78,8 @@ local circut_board = {
 local chip = {
     x = 262,
     y = 7,
-    scaling = 4,
+    scaling = 7,
+    scaling_baseline = 7,
     width = 7,
     height = 7,
     x_placement_span_min = 262,
@@ -267,7 +268,7 @@ function love.update(dt)
                 -- check if we can start dragging
                 if chip.dragging == false and chip_collsion then
                     chip.dragging = true
-                    chip.scaling = 5
+                    chip.scaling = 8
                     -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
                     mouse.mouse_x_chip_off_set = mouse_x - chip.x
                     mouse.mouse_y_chip_off_set = mouse_y - chip.y
@@ -275,7 +276,7 @@ function love.update(dt)
             else
                 -- Stop dragging when mouse released
                 chip.dragging = false
-                chip.scaling = 4
+                chip.scaling = chip.scaling_baseline
             end
 
             -- move of chip allowed..
@@ -376,17 +377,17 @@ function love.draw()
         end
 
         --draw place where we can place our chip        
-        love.graphics.rectangle('line', chip_placemenet_area.x, chip_placemenet_area.y, chip_placemenet_area.width, chip_placemenet_area.height )
+        -- love.graphics.rectangle('line', chip_placemenet_area.x, chip_placemenet_area.y, chip_placemenet_area.width, chip_placemenet_area.height )
         
         -- draw connector area 1
-        love.graphics.rectangle('line', wire_connector_placemenet_area_1.x, wire_connector_placemenet_area_1.y, wire_connector_placemenet_area_1.width, wire_connector_placemenet_area_1.height )
+        -- love.graphics.rectangle('line', wire_connector_placemenet_area_1.x, wire_connector_placemenet_area_1.y, wire_connector_placemenet_area_1.width, wire_connector_placemenet_area_1.height )
          
 
-        love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 5, 0, 4, 4)
+        -- love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 5, 0, 4, 4)
 
-        love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 30, 0, 4, 4)
+        -- love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 30, 0, 4, 4)
         
-        love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 55, 0, 4, 4)
+        -- love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_1.x + 1, wire_connector_placemenet_area_1.y + 55, 0, 4, 4)
 
         -- love.graphics.rectangle('fill', wire_connector_placemenet_area_1.x + 5, wire_connector_placemenet_area_1.y + 5, 4*2,4*2)
 
@@ -396,12 +397,12 @@ function love.draw()
         
         -- draw connector area 2
         
-        love.graphics.rectangle('line', wire_connector_placemenet_area_2.x, wire_connector_placemenet_area_2.y, wire_connector_placemenet_area_2.width, wire_connector_placemenet_area_2.height )
-        love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 5, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
+        -- love.graphics.rectangle('line', wire_connector_placemenet_area_2.x, wire_connector_placemenet_area_2.y, wire_connector_placemenet_area_2.width, wire_connector_placemenet_area_2.height )
+        -- love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 5, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
 
-        love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_2.x + 30, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
+        -- love.graphics.draw( images.connector_grey_00,  wire_connector_placemenet_area_2.x + 30, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
         
-        love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 55, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
+        -- love.graphics.draw( images.connector_yellow_00,  wire_connector_placemenet_area_2.x + 55, wire_connector_placemenet_area_2.y + 5, 0, 4, 4)
 
         for key, connector in pairs(connectors_list) do
             love.graphics.draw(connector.sprite, connector.x, connector.y, 0, connector.scaling, connector.scaling)
@@ -452,6 +453,7 @@ function love.keypressed(key)
 
     if key == "," then
         reset_chip()
+        reset_connectors()
     end
 
     -- toggle fullscreen
@@ -566,10 +568,10 @@ end
 
 function add_connector(sprite)
     local connectors_length = #connectors_list
-    local spacing_x = 20
+    local spacing_x = 25
     local connector = {
         x = 262,
-        y = 50,
+        y = 70,
         scaling = 4,
         width = 4,
         height = 4,
@@ -588,4 +590,14 @@ function add_connector(sprite)
     table.insert(connectors_list, connector)
 end
 
+function reset_connectors()
+    connectors_list  = {}
+
+    add_connector(images.connector_yellow_00)
+    add_connector(images.connector_yellow_00)
+    add_connector(images.connector_yellow_00)
+    add_connector(images.connector_grey_00)
+    add_connector(images.connector_grey_00)
+    add_connector(images.connector_grey_00)
+end
 
