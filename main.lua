@@ -266,68 +266,11 @@ function love.update(dt)
         end
 
         if current_scene == scenes.chipping then
-            local chip_collsion = collision_check(mouse, chip)
-          
-            if love.mouse.isDown(1) then
-                -- check if we can start dragging
-                if chip.dragging == false and chip_collsion then
-                    chip.dragging = true
-                    chip.scaling = 8
-                    -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
-                    mouse.mouse_x_chip_off_set = mouse_x - chip.x
-                    mouse.mouse_y_chip_off_set = mouse_y - chip.y
-                end
-            else
-                -- Stop dragging when mouse released
-                chip.dragging = false
-                chip.scaling = chip.scaling_baseline
-            end
-
-            -- move of chip allowed..
-            if chip.dragging then
-                -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
-                chip.x = mouse_x - mouse.mouse_x_chip_off_set
-                chip.y = mouse_y - mouse.mouse_y_chip_off_set
-            end
-
-            -- LOOP THROUGH CONNECTORS
-            for key, connector in pairs(connectors_list) do
-                local connector_collsion = collision_check(mouse, connector)
-
-                if love.mouse.isDown(1) then
-                    -- Only start dragging if nothing else is being dragged
-                    if connector.dragging == false and connector_collsion and flag_dragging_connector == nil then
-                        connector.dragging = true
-                        connector.scaling = 5
-                        flag_dragging_connector = connector  -- Mark this one as being dragged
-                        mouse.mouse_x_chip_off_set = mouse_x - connector.x
-                        mouse.mouse_y_chip_off_set = mouse_y - connector.y
-                    end
-                else
-                    connector.dragging = false
-                    connector.scaling = 4
-                end
-
-                if connector.dragging then
-                    connector.x = mouse_x - mouse.mouse_x_chip_off_set
-                    connector.y = mouse_y - mouse.mouse_y_chip_off_set
-                end
-            end
-
-            -- Reset dragging flag after the loop ends (on mouse release)
-            if not love.mouse.isDown(1) then
-                flag_dragging_connector = nil
-            end
+            move_chip_on_mouse_click()
+            
+            move_connector_on_mouse_click()
             
         end
-      
-        
-        if love.mouse.isDown(1) then
-            -- ..
-        end	
-
-
-        -- player.distance_to_target = calculate_distance_between_two_targets(player.x, bus.y, player.x_target, player.y_target)
         
     end
 
@@ -577,6 +520,32 @@ function reset_chip()
     chip.placed = false
 end
 
+function move_chip_on_mouse_click()
+    local chip_collsion = collision_check(mouse, chip)
+          
+            if love.mouse.isDown(1) then
+                -- check if we can start dragging
+                if chip.dragging == false and chip_collsion then
+                    chip.dragging = true
+                    chip.scaling = 8
+                    -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
+                    mouse.mouse_x_chip_off_set = mouse_x - chip.x
+                    mouse.mouse_y_chip_off_set = mouse_y - chip.y
+                end
+            else
+                -- Stop dragging when mouse released
+                chip.dragging = false
+                chip.scaling = chip.scaling_baseline
+            end
+
+            -- move of chip allowed..
+            if chip.dragging then
+                -- offsets are used to enture the sprites stay accurate possitioned according to the mouse when its clicked
+                chip.x = mouse_x - mouse.mouse_x_chip_off_set
+                chip.y = mouse_y - mouse.mouse_y_chip_off_set
+            end
+end
+
 function add_connector(sprite)
     local connectors_length = #connectors_list
     local spacing_x = 25
@@ -610,5 +579,39 @@ function reset_connectors()
     add_connector(images.connector_grey_00)
     add_connector(images.connector_grey_00)
     add_connector(images.connector_grey_00)
+end
+
+function move_connector_on_mouse_click()
+    
+    -- LOOP THROUGH CONNECTORS, and allow the user to click and move it
+    for key, connector in pairs(connectors_list) do
+        -- check if the mouse click a connector, so we can move it
+        local connector_collsion = collision_check(mouse, connector)
+
+        if love.mouse.isDown(1) then
+            -- Only start dragging if nothing else is being dragged
+            if connector.dragging == false and connector_collsion and flag_dragging_connector == nil then -- flag_dragging_connector this makes us only able to select one connector at a time
+                connector.dragging = true
+                connector.scaling = 5 -- scale the size of the connector when clicked
+                flag_dragging_connector = connector  -- Mark this one as being dragged, this makes us only able to select one connector at a time
+                mouse.mouse_x_chip_off_set = mouse_x - connector.x -- create a offset so we can have the mouse being in the same place as we select the item when moving it
+                mouse.mouse_y_chip_off_set = mouse_y - connector.y -- create a offset so we can have the mouse being in the same place as we select the item when moving it
+            end
+        else
+            -- reset settings and scaling
+            connector.dragging = false
+            connector.scaling = 4
+        end
+        
+        if connector.dragging then
+            -- change the actual poisiton of the connector
+            connector.x = mouse_x - mouse.mouse_x_chip_off_set
+            connector.y = mouse_y - mouse.mouse_y_chip_off_set
+        end
+    end
+    -- Reset dragging flag after the loop ends (on mouse release)
+    if not love.mouse.isDown(1) then
+        flag_dragging_connector = nil
+    end
 end
 
