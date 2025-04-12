@@ -226,6 +226,7 @@ function love.load()
     image_path.glue_gun_pressed = sprite_source .. "glue_gun_pressed.png"
     image_path.soldering_smoke_sprite_sheet = sprite_source .. "soldering_smoke-Sheet.png"
     image_path.glue_stain = sprite_source .. "glue_stain.png"
+    image_path.soldering_stain = sprite_source .. "soldering_stain.png"
 
     -- create the images  
     -- new_img = love.graphics.newImage
@@ -245,6 +246,7 @@ function love.load()
     images.glue_gun_pressed = love.graphics.newImage(image_path.glue_gun_pressed)
     images.soldering_smoke_sprite_sheet = love.graphics.newImage(image_path.soldering_smoke_sprite_sheet)
     images.glue_stain = love.graphics.newImage(image_path.glue_stain)
+    images.soldering_stain = love.graphics.newImage(image_path.soldering_stain)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
@@ -390,6 +392,17 @@ function love.draw()
             -- draw the circuit board
             love.graphics.draw(images.circut_board_00, circut_board.x, circut_board.y, 0, circut_board.scaling, circut_board.scaling)
 
+
+            -- DRAW GLUE STAIN IF ANY
+            for key, glue_stain in pairs(glue_gun_locations_list) do
+                love.graphics.draw(images.glue_stain, glue_stain.x, glue_stain.y, 0, 4, 4)
+            end
+    
+            -- DRAW SOLDERING STAIN IF ANy
+            for key, soldering_stain in pairs(soldering_locations_list) do
+                love.graphics.draw(images.soldering_stain, soldering_stain.x, soldering_stain.y, 0, 4, 4)
+            end
+
             -- draw the chip
             love.graphics.draw(images.chip_01, chip.x, chip.y, 0, chip.scaling, chip.scaling)
 
@@ -407,6 +420,7 @@ function love.draw()
                 love.graphics.setLineWidth(1)
                 reset_color()
             end
+            
 
             -- draw selected items
 
@@ -435,10 +449,11 @@ function love.draw()
                 end
             end
         end
-        for key, glue_stain in pairs(glue_gun_locations_list) do
-            love.graphics.draw(images.glue_stain, glue_stain.x, glue_stain.y, 0, 4, 4)
-        end
-        love.graphics.draw(images.glue_stain, 200, 200, 0, 4, 4)
+        
+
+        -- test glue stain
+        -- love.graphics.draw(images.glue_stain, 200, 200, 0, 4, 4)
+        -- love.graphics.draw(images.soldering_stain, 200, 200, 0, 4, 4)
 
         if developerMode == true then
     
@@ -537,6 +552,10 @@ function love.mousepressed(x, y, button, istouch)
 
         if current_chipping_state == chipping_states.glueing then
             add_glue_stain()
+        end
+
+        if current_chipping_state == chipping_states.soldering then
+            add_soldering_stain()
         end
     end
     if button == 2 then
@@ -857,3 +876,14 @@ function add_glue_stain()
 
     table.insert(glue_gun_locations_list, glue_stain)
 end
+
+function add_soldering_stain()
+
+    local soldering_stain = {
+        x = mouse_x, --+ (glue_gun_settings.x_offset * glue_gun_settings.scaling),
+        y = mouse_y - 12 -- + (glue_gun_settings.y_offset * glue_gun_settings.scaling)
+    }
+
+    table.insert(soldering_locations_list, soldering_stain)
+end
+
