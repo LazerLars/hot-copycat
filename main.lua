@@ -336,17 +336,27 @@ function love.update(dt)
             
             -- only allow to drag wires and chips in this state
             if current_chipping_state == chipping_states.dragging then
+                -- check for glue chip collision
                 for key, glue_stain in pairs(glue_gun_locations_list) do
                     local collision = collision_check(glue_stain, chip)
+                    -- if we have a collison and we dont drag we want to mark the chip as glued
                     if collision and chip.dragging == false then
                         chip.glued = true
+                    end
+                    -- check for connector collison
+                    for key, connector in pairs(connectors_list) do
+                        local collision = collision_check(connector, glue_stain)
+                        if collision and connector.dragging == false then
+                            connector.glued = true
+                        end
+                        
                     end
                 end
                 -- ensure we only move one objeect at a time
                 if flag_dragging_connector == nil and flag_dragging_wire == nil then
-                    if not chip.glued then
-                        move_chip_on_mouse_click()
-                    end
+                    -- if not chip.glued then
+                    move_chip_on_mouse_click()
+                    -- end
                 end
                 
                 if flag_dragging_chip == nil and flag_dragging_wire == nil then
@@ -677,7 +687,7 @@ end
 function move_chip_on_mouse_click()
     local chip_collsion = collision_check(mouse, chip)
           
-            if love.mouse.isDown(1) then
+            if love.mouse.isDown(1) and chip.glued == false then
                 -- check if we can start dragging
                 if chip.dragging == false and chip_collsion then
                     chip.dragging = true
@@ -692,6 +702,9 @@ function move_chip_on_mouse_click()
                 chip.dragging = false
                 chip.scaling = chip.scaling_baseline
                 flag_dragging_chip = nil  -- Reset the flag
+                if chip_collsion and chip.glued == true and love.mouse.isDown(1) then
+                    print("you cant move it its glued")
+                end
             end
 
             -- move of chip allowed..
@@ -709,7 +722,7 @@ function move_connector_on_mouse_click()
         -- check if the mouse click a connector, so we can move it
         local connector_collsion = collision_check(mouse, connector)
 
-        if love.mouse.isDown(1) then
+        if love.mouse.isDown(1) and connector.glued == false then
             -- Only start dragging if nothing else is being dragged
             if connector.dragging == false and connector_collsion and flag_dragging_connector == nil then -- flag_dragging_connector this makes us only able to select one connector at a time
                 connector.dragging = true
@@ -722,6 +735,10 @@ function move_connector_on_mouse_click()
             -- reset settings and scaling
             connector.dragging = false
             connector.scaling = 4
+            -- tell the user you cant drag the item
+            if connector_collsion and connector.glued == true and love.mouse.isDown(1) then
+                print("you cant move it its glued")
+            end
         end
         
         if connector.dragging then
@@ -789,7 +806,7 @@ function add_connector(sprite)
         -- y_placement_span_max = 16,
         collision = false,
         dragging = false,
-        placed = false,
+        glued = false,
         sprite = sprite
     }
     if #connectors_list > 0 then
