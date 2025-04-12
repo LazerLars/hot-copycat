@@ -269,12 +269,11 @@ function love.load()
     -- LOAD SOUNDS
     sfx.soldering = love.audio.newSource("src/sfx/solderin_iron_sfx.wav", 'static')
     sfx.soldering:setLooping(true)
-    -- sfx.idle = love.audio.newSource("src/sfx/sfx_bus_idle.wav", 'static')
+    sfx.glue = love.audio.newSource("src/sfx/glue.wav", 'static')
+    -- sfx.glue:setLooping(true)
+   
     
     -- sfx.idle:setVolume(0.3)
-    
-
-    -- sfx.idle:play()
     
     -- set initial position of the buttons
     current_scene = scenes.chipping
@@ -349,6 +348,10 @@ function love.update(dt)
                 animations.soldering_smoke_animation:update(dt)
                 soldering_sfx()
 
+            end
+
+            if current_chipping_state == chipping_states.glueing then
+                
             end
 
             
@@ -553,6 +556,7 @@ function love.mousepressed(x, y, button, istouch)
 
         if current_chipping_state == chipping_states.glueing then
             add_glue_stain()
+            sfx.glue:play()
         end
 
         if current_chipping_state == chipping_states.soldering then
@@ -899,4 +903,3 @@ function soldering_sfx()
         end
     end
 end
-

@@ -42,7 +42,11 @@ https://kenney.nl/assets/cursor-pixel-pack
 
 Sfx:  
 Soldering iron:  
-EMF recording - Soldering Iron by alexdarek -- https://freesound.org/s/701636/ -- License: Attribution 4.0
+EMF recording - Soldering Iron by alexdarek -- https://freesound.org/s/701636/ -- License: Attribution 4.0  
+
+Glue:  
+SFX_STICKERRIPPER_slayer_92.wav by MrFossy -- https://freesound.org/s/590525/ -- License: Creative Commons 0  
+
 
 
 Music:    
