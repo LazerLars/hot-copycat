@@ -388,10 +388,11 @@ function love.draw()
                 
             end
             if current_chipping_state == chipping_states.soldering then
+                love.graphics.draw(images.soldering_iron, mouse_x, mouse_y - (16 * 4 ) , 0, 4, 4)
                 
             end
             if current_chipping_state == chipping_states.glueing then
-                
+                love.graphics.draw(images.glue_gun, mouse_x, mouse_y - (3 * 4), 0, 4,4)
             end
         end
 
