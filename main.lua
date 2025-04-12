@@ -35,6 +35,14 @@ local animations = {}
 
 local sfx = {}
 
+local chipping_states = {
+    dragging = 1,
+    soldering = 2,
+    glueing = 3
+}
+
+local current_chipping_state = chipping_states.dragging
+
 local scenes = {
     chipping = 'chipping',
     front_desk = 'front_desk'
@@ -141,6 +149,8 @@ local mouse = {
     mouse_y_chip_off_set = 0
 }
 
+local drag_icon_flag = false
+
 local timer = 0
 
 local mouse_x = 0
@@ -189,6 +199,10 @@ function love.load()
     image_path.customer_sprite_sheet = sprite_source .. "customer_16x16_00-Sheet.png"
     image_path.connector_yellow_00 = sprite_source .. "connector_yellow_00.png"
     image_path.connector_grey_00 = sprite_source .. "connector_grey_00.png"
+    image_path.hand_drag = sprite_source .. "kenney_hand_drag.png"
+    image_path.hand_normal = sprite_source .. "kenney_hand_normal.png"
+    image_path.soldering_iron = sprite_source .. "soldering_iron.png"
+    image_path.glue_gun = sprite_source .. "glue_gun.png"
 
     -- create the images  
     -- new_img = love.graphics.newImage
@@ -201,6 +215,10 @@ function love.load()
     images.customer_sprite_sheet = love.graphics.newImage(image_path.customer_sprite_sheet)
     images.connector_yellow_00 = love.graphics.newImage(image_path.connector_yellow_00)
     images.connector_grey_00 = love.graphics.newImage(image_path.connector_grey_00)
+    images.hand_drag = love.graphics.newImage(image_path.hand_drag)
+    images.hand_normal = love.graphics.newImage(image_path.hand_normal)
+    images.soldering_iron = love.graphics.newImage(image_path.soldering_iron)
+    images.glue_gun = love.graphics.newImage(image_path.glue_gun)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
@@ -280,19 +298,23 @@ function love.update(dt)
         end
 
         if current_scene == scenes.chipping then
-            -- ensure we only move one objeect at a time
-            if flag_dragging_connector == nil and flag_dragging_wire == nil then
-                move_chip_on_mouse_click()
-            end
-            
-            if flag_dragging_chip == nil and flag_dragging_wire == nil then
-                move_connector_on_mouse_click()
-            end
 
-            if flag_dragging_chip == nil and flag_dragging_connector == nil then
-                move_wire_on_mouse_click()
-            end
+            -- only allow to drag wires and chips in this state
+            if current_chipping_state == chipping_states.dragging then
 
+                -- ensure we only move one objeect at a time
+                if flag_dragging_connector == nil and flag_dragging_wire == nil then
+                    move_chip_on_mouse_click()
+                end
+                
+                if flag_dragging_chip == nil and flag_dragging_wire == nil then
+                    move_connector_on_mouse_click()
+                end
+
+                if flag_dragging_chip == nil and flag_dragging_connector == nil then
+                    move_wire_on_mouse_click()
+                end
+            end
 
             
         end
@@ -353,6 +375,24 @@ function love.draw()
                 love.graphics.setLineWidth(1)
                 reset_color()
             end
+
+            -- draw selected items
+
+            if current_chipping_state == chipping_states.dragging then
+                if drag_icon_flag == true then
+                    love.graphics.draw(images.hand_drag, mouse_x - 8, mouse_y)
+                else
+                    love.graphics.draw(images.hand_normal, mouse_x - 8, mouse_y)
+                end
+    
+                
+            end
+            if current_chipping_state == chipping_states.soldering then
+                
+            end
+            if current_chipping_state == chipping_states.glueing then
+                
+            end
         end
 
 
@@ -384,6 +424,21 @@ end
 
 
 function love.keypressed(key)
+
+    if key == "1" then
+        current_chipping_state = chipping_states.dragging
+        print("changing to dragging state: " .. current_chipping_state)
+    end
+    
+    if key == "2" then
+        current_chipping_state = chipping_states.soldering
+        print("chaning to solderings state: " .. current_chipping_state)
+    end
+
+    if key == "3" then
+        current_chipping_state = chipping_states.glueing
+        print("changing to gluing state: " .. current_chipping_state)
+    end
     if key == '.' then
         print("changing scene")
         if current_scene == scenes.chipping then
@@ -431,7 +486,7 @@ end
 function love.mousepressed(x, y, button, istouch)
     -- when the leftm mouse  is pressed, we want to save the initial click x,y position
     if button == 1 then -- Versions prior to 0.10.0 use the MouseConstant 'l'
-      --...
+        drag_icon_flag = true
     end
     if button == 2 then
      
@@ -441,12 +496,13 @@ function love.mousepressed(x, y, button, istouch)
             player.facing_left = false
         end
     end
+
  end
 
  function love.mousereleased(x, y, button)
     -- when the left mouse is released we want to reset the mouse selection so we can stop drawing the square on the screen
     if button == 1 then
-        -- ...
+        drag_icon_flag = false
     end
 
     if button == 2 then
