@@ -95,8 +95,7 @@ local chip = {
     y_placement_span_max = 16,
     collision = false,
     dragging = false,
-    glued = false
-
+    glued = false,
 }
 
  -- draw chip placement box
@@ -127,6 +126,10 @@ local connectors_list = {} -- list to hold the connectors we need to solder the 
 
 local wires_list = {}
 
+-- list to hold positions of pins on the chip, so we can collision detect
+local chip_pins_list = {}
+
+
 local soldering_locations_list = {}
 
 local glue_gun_locations_list = {}
@@ -143,9 +146,6 @@ local glue_gun_settings = {
 }
 
 
-local enemies = {
-
-}
 
 local stats = {
 }
@@ -298,7 +298,7 @@ function love.load()
     add_wire(5)
     add_wire(6)
 
-
+    add_chip_pins()
 
     mouse_x = maid64.mouse.getX()
     mouse_y = maid64.mouse.getY()
@@ -333,7 +333,11 @@ function love.update(dt)
         end
 
         if current_scene == scenes.chipping then
-            
+            -- update chip pin locations
+            for key, pin in pairs(chip_pins_list) do
+                pin.x = chip.x + pin.x_baseline
+                pin.y = chip.y + pin.y_baseline
+            end
             -- only allow to drag wires and chips in this state
             if current_chipping_state == chipping_states.dragging then
                 -- check for glue chip collision
@@ -558,6 +562,8 @@ function love.keypressed(key)
         reset_connectors()
         reset_wires()
         glue_gun_locations_list = {}
+        chip_pins_list = {}
+        add_chip_pins()
     end
 
     -- toggle fullscreen
@@ -810,7 +816,8 @@ function add_connector(sprite)
         collision = false,
         dragging = false,
         glued = false,
-        sprite = sprite
+        sprite = sprite,
+        wire_soldered = false
     }
     if #connectors_list > 0 then
         connector.x = connector.x + (spacing_x * connectors_length)
@@ -849,6 +856,7 @@ function add_wire(color_numb)
             collision = false,
             dragging = false,
             placed = false,
+            soldered = false
         },
         line_end = {
             x = x,
@@ -859,6 +867,7 @@ function add_wire(color_numb)
             collision = false,
             dragging = false,
             placed = false,
+            soldered = false
         }
     }
 
@@ -942,4 +951,97 @@ function soldering_sfx()
             sfx.soldering:stop()
         end
     end
+end
+
+
+function add_chip_pins()
+    -- 1
+    local pin = {
+        x = 2,
+        y = 1,
+        x_baseline = 2,
+        y_baseline = 1,
+        width = 1,
+        height = 1,
+        scaling = chip.scaling,
+        wire_connected = false,
+        wire_soldered = false
+    }
+    
+    table.insert(chip_pins_list, pin)
+
+    -- 2
+    pin = {
+        x = 4,
+        y = 1,
+        x_baseline = 4,
+        y_baseline = 1,
+        width = 1,
+        height = 1,
+        scaling = chip.scaling,
+        wire_connected = false,
+        wire_soldered = false
+    }
+    
+    table.insert(chip_pins_list, pin)
+
+    -- 3
+    pin = {
+        x = 6,
+        y = 1,
+        x_baseline = 6,
+        y_baseline = 1,
+        width = 1,
+        height = 1,
+        scaling = chip.scaling,
+        wire_connected = false,
+        wire_soldered = false
+    }
+
+    table.insert(chip_pins_list, pin)
+
+    -- 4
+    pin = {
+        x = 2,
+        y = 7,
+        x_baseline = 2,
+        y_baseline = 7,
+        width = 1,
+        height = 1,
+        scaling = chip.scaling,
+        wire_connected = false,
+        wire_soldered = false
+    }
+
+    table.insert(chip_pins_list, pin)
+
+    -- 5
+    pin = {
+        x = 2,
+        y = 7,
+        x_baseline = 2,
+        y_baseline = 7,
+        width = 1,
+        height = 1,
+        scaling = chip.scaling,
+        wire_connected = false,
+        wire_soldered = false
+    }
+
+    table.insert(chip_pins_list, pin)
+
+    -- 6
+    pin = {
+        x = 2,
+        y = 7,
+        x_baseline = 2,
+        y_baseline = 7,
+        width = 1,
+        height = 1,
+        scaling = chip.scaling,
+        wire_connected = false,
+        wire_soldered = false
+    }
+
+    table.insert(chip_pins_list, pin)
 end
