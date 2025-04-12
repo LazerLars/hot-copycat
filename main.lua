@@ -19,6 +19,8 @@ local settings = {
     screenHeight = 270
 }
 
+debug_mode = false
+
 developerMode = true
 draw_hit_boxes = false
 
@@ -333,12 +335,17 @@ function love.update(dt)
         end
 
         if current_scene == scenes.chipping then
-            -- update chip pin locations
-            for key, pin in pairs(chip_pins_list) do
-                pin.x = chip.x + pin.x_baseline
-                pin.y = chip.y + pin.y_baseline
-            end
-            -- only allow to drag wires and chips in this state
+            
+            -- -- update chip pin locations
+            -- for key, pin in pairs(chip_pins_list) do
+            --     if debug_mode then
+            --         print("we are in debug...")
+            --     end
+            --     pin.x = chip.x + pin.x_baseline
+            --     pin.y = chip.y + pin.y_baseline
+            -- end
+
+            -- when we are in draggin state
             if current_chipping_state == chipping_states.dragging then
                 -- check for glue chip collision
                 for key, glue_stain in pairs(glue_gun_locations_list) do
@@ -359,17 +366,49 @@ function love.update(dt)
                         
                     end
                 end
+
+                for key, wire in pairs(wires_list) do
+                    if debug_mode then
+                        print("we are in debug...")
+                    end
+                    local wire_start = wire.line_start
+                    local wire_end = wire.line_end
+                    for key, pin in pairs(chip_pins_list) do
+                        local this_pin = { 
+                            x = chip.x + pin.x,
+                            y = chip.y +  pin.y,
+                            width = pin.width,
+                            height = pin.height,
+                            scaling = pin.scaling,
+                            wire_connected = pin.wire_connected,
+                            wire_soldered = pin.wire_soldered
+                        }
+
+                        local collision_start = collision_check(wire_start, this_pin)
+                        local collision_end = collision_check(wire_end, this_pin)
+                        if collision_start then
+                            print("wire collision start")
+                        end
+                        if collision_end then
+                            print("wire collision end")
+                        end
+                    end
+                    
+                end
                 -- ensure we only move one objeect at a time
+                -- move chip
                 if flag_dragging_connector == nil and flag_dragging_wire == nil then
                     -- if not chip.glued then
                     move_chip_on_mouse_click()
                     -- end
                 end
                 
+                -- move connector(s)
                 if flag_dragging_chip == nil and flag_dragging_wire == nil then
                     move_connector_on_mouse_click()
                 end
                 
+                -- move wire(s)
                 if flag_dragging_chip == nil and flag_dragging_connector == nil then
                     move_wire_on_mouse_click()
                 end
@@ -566,6 +605,9 @@ function love.keypressed(key)
         add_chip_pins()
     end
 
+    if key == "-" then
+        debug_mode = true
+    end
     -- toggle fullscreen
     if key == 'f11' then
         if settings.fullscreen == false then
@@ -955,15 +997,18 @@ end
 
 
 function add_chip_pins()
+    local hitbox_pixels = 6
+    local height_base = 6
+    local scaling = 1
     -- 1
     local pin = {
-        x = 2,
+        x = 7,
         y = 1,
         x_baseline = 2,
         y_baseline = 1,
-        width = 1,
-        height = 1,
-        scaling = chip.scaling,
+        width = hitbox_pixels,
+        height = hitbox_pixels,
+        scaling = 1,
         wire_connected = false,
         wire_soldered = false
     }
@@ -972,13 +1017,13 @@ function add_chip_pins()
 
     -- 2
     pin = {
-        x = 4,
+        x = 19,
         y = 1,
         x_baseline = 4,
         y_baseline = 1,
-        width = 1,
-        height = 1,
-        scaling = chip.scaling,
+        width = hitbox_pixels,
+        height = hitbox_pixels,
+        scaling = scaling,
         wire_connected = false,
         wire_soldered = false
     }
@@ -987,13 +1032,13 @@ function add_chip_pins()
 
     -- 3
     pin = {
-        x = 6,
+        x = 31,
         y = 1,
         x_baseline = 6,
         y_baseline = 1,
-        width = 1,
-        height = 1,
-        scaling = chip.scaling,
+        width = hitbox_pixels,
+        height = hitbox_pixels,
+        scaling = scaling,
         wire_connected = false,
         wire_soldered = false
     }
@@ -1002,13 +1047,13 @@ function add_chip_pins()
 
     -- 4
     pin = {
-        x = 2,
-        y = 7,
+        x = 7,
+        y = 37,
         x_baseline = 2,
         y_baseline = 7,
-        width = 1,
-        height = 1,
-        scaling = chip.scaling,
+        width = hitbox_pixels,
+        height = hitbox_pixels,
+        scaling = scaling,
         wire_connected = false,
         wire_soldered = false
     }
@@ -1017,13 +1062,13 @@ function add_chip_pins()
 
     -- 5
     pin = {
-        x = 2,
-        y = 7,
+        x = 19,
+        y = 37,
         x_baseline = 2,
         y_baseline = 7,
-        width = 1,
-        height = 1,
-        scaling = chip.scaling,
+        width = hitbox_pixels,
+        height = hitbox_pixels,
+        scaling = scaling,
         wire_connected = false,
         wire_soldered = false
     }
@@ -1032,13 +1077,13 @@ function add_chip_pins()
 
     -- 6
     pin = {
-        x = 2,
-        y = 7,
+        x = 31,
+        y = 37,
         x_baseline = 2,
         y_baseline = 7,
-        width = 1,
-        height = 1,
-        scaling = chip.scaling,
+        width = hitbox_pixels,
+        height = hitbox_pixels,
+        scaling = 1,
         wire_connected = false,
         wire_soldered = false
     }
