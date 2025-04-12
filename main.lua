@@ -270,6 +270,11 @@ function love.load()
     sfx.soldering = love.audio.newSource("src/sfx/solderin_iron_sfx.wav", 'static')
     sfx.soldering:setLooping(true)
     sfx.glue = love.audio.newSource("src/sfx/glue.wav", 'static')
+    sfx.music_loop = love.audio.newSource("src/sfx/drama_party.wav", 'static')
+    sfx.music_loop:setLooping(true)
+    sfx.music_loop:play()
+    sfx.music_loop:setVolume(0.5)
+
     -- sfx.glue:setLooping(true)
    
     
