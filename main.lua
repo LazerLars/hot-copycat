@@ -267,8 +267,8 @@ function love.load()
     player_move = tween.new(2, player, {x=player.x_target, y=player.y_target}, tween.easing.linear)
 
     -- LOAD SOUNDS
-    -- sfx.driving = love.audio.newSource("src/sfx/sfx_drive_short.wav", 'static')
-    -- sfx.driving:setLooping(true)
+    sfx.soldering = love.audio.newSource("src/sfx/solderin_iron_sfx.wav", 'static')
+    sfx.soldering:setLooping(true)
     -- sfx.idle = love.audio.newSource("src/sfx/sfx_bus_idle.wav", 'static')
     
     -- sfx.idle:setVolume(0.3)
@@ -347,6 +347,7 @@ function love.update(dt)
             end
             if current_chipping_state == chipping_states.soldering then
                 animations.soldering_smoke_animation:update(dt)
+                soldering_sfx()
 
             end
 
@@ -871,7 +872,8 @@ function add_glue_stain()
 
     local glue_stain = {
         x = mouse_x, --+ (glue_gun_settings.x_offset * glue_gun_settings.scaling),
-        y = mouse_y - 12 -- + (glue_gun_settings.y_offset * glue_gun_settings.scaling)
+        y = mouse_y - 12, -- + (glue_gun_settings.y_offset * glue_gun_settings.scaling)
+        scaling = 4
     }
 
     table.insert(glue_gun_locations_list, glue_stain)
@@ -881,9 +883,20 @@ function add_soldering_stain()
 
     local soldering_stain = {
         x = mouse_x, --+ (glue_gun_settings.x_offset * glue_gun_settings.scaling),
-        y = mouse_y - 12 -- + (glue_gun_settings.y_offset * glue_gun_settings.scaling)
+        y = mouse_y - 12, -- + (glue_gun_settings.y_offset * glue_gun_settings.scaling)
+        scaling = 4
     }
 
     table.insert(soldering_locations_list, soldering_stain)
+end
+
+function soldering_sfx()
+    if love.mouse.isDown(1) then
+        sfx.soldering:play()
+    else
+        if sfx.soldering:isPlaying() then
+            sfx.soldering:stop()
+        end
+    end
 end
 
