@@ -95,7 +95,7 @@ local chip = {
     y_placement_span_max = 16,
     collision = false,
     dragging = false,
-    placed = false
+    glued = false
 
 }
 
@@ -270,6 +270,7 @@ function love.load()
     sfx.soldering = love.audio.newSource("src/sfx/solderin_iron_sfx.wav", 'static')
     sfx.soldering:setLooping(true)
     sfx.glue = love.audio.newSource("src/sfx/glue.wav", 'static')
+    sfx.blob = love.audio.newSource("src/sfx/blob.wav", 'static')
     sfx.music_loop = love.audio.newSource("src/sfx/drama_party.wav", 'static')
     sfx.music_loop:setLooping(true)
     sfx.music_loop:play()
@@ -332,13 +333,20 @@ function love.update(dt)
         end
 
         if current_scene == scenes.chipping then
-
+            
             -- only allow to drag wires and chips in this state
             if current_chipping_state == chipping_states.dragging then
-                
+                for key, glue_stain in pairs(glue_gun_locations_list) do
+                    local collision = collision_check(glue_stain, chip)
+                    if collision and chip.dragging == false then
+                        chip.glued = true
+                    end
+                end
                 -- ensure we only move one objeect at a time
                 if flag_dragging_connector == nil and flag_dragging_wire == nil then
-                    move_chip_on_mouse_click()
+                    if not chip.glued then
+                        move_chip_on_mouse_click()
+                    end
                 end
                 
                 if flag_dragging_chip == nil and flag_dragging_wire == nil then
@@ -559,6 +567,9 @@ function love.mousepressed(x, y, button, istouch)
         glue_gun_pressed_flag = true
         soldering_pressed_flag = true
 
+        if current_chipping_state == chipping_states.dragging then
+            sfx.blob:play()
+        end
         if current_chipping_state == chipping_states.glueing then
             add_glue_stain()
             sfx.glue:play()
@@ -660,7 +671,7 @@ function reset_chip()
     chip.y_placement_span_max = 16
     chip.collision = false
     chip.dragging = false
-    chip.placed = false
+    chip.glued = false
 end
 
 function move_chip_on_mouse_click()
@@ -882,7 +893,9 @@ function add_glue_stain()
     local glue_stain = {
         x = mouse_x, --+ (glue_gun_settings.x_offset * glue_gun_settings.scaling),
         y = mouse_y - 12, -- + (glue_gun_settings.y_offset * glue_gun_settings.scaling)
-        scaling = 4
+        scaling = 4,
+        width = 4,
+        height = 4
     }
 
     table.insert(glue_gun_locations_list, glue_stain)
@@ -893,7 +906,9 @@ function add_soldering_stain()
     local soldering_stain = {
         x = mouse_x, --+ (glue_gun_settings.x_offset * glue_gun_settings.scaling),
         y = mouse_y - 12, -- + (glue_gun_settings.y_offset * glue_gun_settings.scaling)
-        scaling = 4
+        scaling = 4,
+        width = 4,
+        height = 4
     }
 
     table.insert(soldering_locations_list, soldering_stain)

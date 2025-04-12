@@ -37,6 +37,7 @@ https://github.com/kikito/tween.lua
 
 Icon pack:  
 https://kenney.nl/assets/cursor-pixel-pack  
+https://kenney.nl/assets/input-prompts-pixel-16  
 
 
 
@@ -46,6 +47,9 @@ EMF recording - Soldering Iron by alexdarek -- https://freesound.org/s/701636/ -
 
 Glue:  
 SFX_STICKERRIPPER_slayer_92.wav by MrFossy -- https://freesound.org/s/590525/ -- License: Creative Commons 0  
+
+Pickup:  
+b2.ogg by Pellepyb -- https://freesound.org/s/431670/ -- License: Creative Commons 0  
 
 
 
