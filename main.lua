@@ -339,13 +339,16 @@ function love.update(dt)
                 -- check for glue chip collision
                 for key, glue_stain in pairs(glue_gun_locations_list) do
                     local collision = collision_check(glue_stain, chip)
-                    -- if we have a collison and we dont drag we want to mark the chip as glued
+                    -- CHIP COLLISION with glue
+                    -- check if we need to mark it as glued
                     if collision and chip.dragging == false then
                         chip.glued = true
                     end
                     -- check for connector collison
                     for key, connector in pairs(connectors_list) do
                         local collision = collision_check(connector, glue_stain)
+                        -- CONNECTOR COLLISION with glue
+                        -- check if we need to mark it as glued
                         if collision and connector.dragging == false then
                             connector.glued = true
                         end
