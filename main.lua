@@ -169,6 +169,7 @@ local mouse = {
 
 local drag_icon_flag = false
 local glue_gun_pressed_flag = false
+local soldering_pressed_flag = false
 
 local timer = 0
 
@@ -223,6 +224,7 @@ function love.load()
     image_path.soldering_iron = sprite_source .. "soldering_iron.png"
     image_path.glue_gun = sprite_source .. "glue_gun.png"
     image_path.glue_gun_pressed = sprite_source .. "glue_gun_pressed.png"
+    image_path.soldering_smoke_sprite_sheet = sprite_source .. "soldering_smoke-Sheet.png"
 
     -- create the images  
     -- new_img = love.graphics.newImage
@@ -240,16 +242,19 @@ function love.load()
     images.soldering_iron = love.graphics.newImage(image_path.soldering_iron)
     images.glue_gun = love.graphics.newImage(image_path.glue_gun)
     images.glue_gun_pressed = love.graphics.newImage(image_path.glue_gun_pressed)
+    images.soldering_smoke_sprite_sheet = love.graphics.newImage(image_path.soldering_smoke_sprite_sheet)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
+    grids.soldering_smoke_grid = anim8.newGrid(16, 16, images.soldering_smoke_sprite_sheet:getWidth(), images.soldering_smoke_sprite_sheet:getHeight())
     -- grids.customers_grid = anim8.newGrid(16,16, images.customer_sprite_sheet, images.customer_sprite_sheet:getWidth(), images.customer_sprite_sheet:getHeight() )
     
 
     -- animations
     animations.player_idle_animation = anim8.newAnimation(grids.player_grid('1-5', 1), 0.3)
     animations.player_walk_animation = anim8.newAnimation(grids.player_grid('1-5', 2), 0.3)
-
+    animations.soldering_smoke_animation = anim8.newAnimation(grids.soldering_smoke_grid('1-5', 1), 0.08)
+    
     -- animations.customer_00_idle
     -- animations.customer_01_walk
     -- animations.customer_02_sleep
@@ -322,7 +327,7 @@ function love.update(dt)
 
             -- only allow to drag wires and chips in this state
             if current_chipping_state == chipping_states.dragging then
-
+                
                 -- ensure we only move one objeect at a time
                 if flag_dragging_connector == nil and flag_dragging_wire == nil then
                     move_chip_on_mouse_click()
@@ -331,10 +336,14 @@ function love.update(dt)
                 if flag_dragging_chip == nil and flag_dragging_wire == nil then
                     move_connector_on_mouse_click()
                 end
-
+                
                 if flag_dragging_chip == nil and flag_dragging_connector == nil then
                     move_wire_on_mouse_click()
                 end
+            end
+            if current_chipping_state == chipping_states.soldering then
+                animations.soldering_smoke_animation:update(dt)
+
             end
 
             
@@ -410,6 +419,9 @@ function love.draw()
             end
             if current_chipping_state == chipping_states.soldering then
                 love.graphics.draw(images.soldering_iron, mouse_x, mouse_y - (soldering_iron_settings.y_offset * soldering_iron_settings.scaling ) , 0, soldering_iron_settings.scaling, soldering_iron_settings.scaling)
+                if soldering_pressed_flag then
+                    animations.soldering_smoke_animation:draw(images.soldering_smoke_sprite_sheet, mouse_x, mouse_y - (soldering_iron_settings.y_offset * soldering_iron_settings.scaling ), 0, soldering_iron_settings.scaling, soldering_iron_settings.scaling)
+                end
                 
             end
             if current_chipping_state == chipping_states.glueing then
@@ -515,6 +527,7 @@ function love.mousepressed(x, y, button, istouch)
     if button == 1 then -- Versions prior to 0.10.0 use the MouseConstant 'l'
         drag_icon_flag = true
         glue_gun_pressed_flag = true
+        soldering_pressed_flag = true
     end
     if button == 2 then
      
@@ -532,6 +545,7 @@ function love.mousepressed(x, y, button, istouch)
     if button == 1 then
         drag_icon_flag = false
         glue_gun_pressed_flag = false
+        soldering_pressed_flag = false
     end
 
     if button == 2 then
