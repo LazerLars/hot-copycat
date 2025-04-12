@@ -132,10 +132,6 @@ local wires_list = {}
 local chip_pins_list = {}
 
 
-local soldering_locations_list = {}
-
-local glue_gun_locations_list = {}
-
 local soldering_iron_settings = {
     x_offset = 0,
     y_offset = 16,
@@ -336,15 +332,7 @@ function love.update(dt)
 
         if current_scene == scenes.chipping then
             
-            -- -- update chip pin locations
-            -- for key, pin in pairs(chip_pins_list) do
-            --     if debug_mode then
-            --         print("we are in debug...")
-            --     end
-            --     pin.x = chip.x + pin.x_baseline
-            --     pin.y = chip.y + pin.y_baseline
-            -- end
-
+            
             -- when we are in draggin state
             if current_chipping_state == chipping_states.dragging then
                 -- check for glue chip collision
@@ -367,15 +355,17 @@ function love.update(dt)
                     end
                 end
                 
-                -- check if a wire i connected to the chip or a connector
+                -- check if a wire is connected to the chip or a connector
                 for key, wire in pairs(wires_list) do
                     if debug_mode then
                         print("we are in debug...")
                     end
 
+
                     local wire_start = wire.line_start
                     local wire_end = wire.line_end
 
+                   
                     -- create a local copy of the pin so we can add the chip.x and chip.y to the posision
                     for key, pin in pairs(chip_pins_list) do
                         local this_pin = { 
@@ -391,13 +381,13 @@ function love.update(dt)
                         local collision_start = collision_check(wire_start, this_pin)
                         local collision_end = collision_check(wire_end, this_pin)
                         if collision_start then
-                            print("wire collision start")
+                            -- print("wire collision start")
                             pin.wire_connected = true
                         else
                             pin.wire_connected = false
                         end
                         if collision_end then
-                            print("wire collision end")
+                            -- print("wire collision end")
                             pin.wire_connected = true
                         else
                             pin.wire_connected = false
@@ -409,20 +399,20 @@ function love.update(dt)
                         local collision_start = collision_check(wire_start, connector)
                         local collision_end = collision_check(wire_end, connector)
                         if collision_start then
-                            print("connector collision start")
+                            -- print("connector collision start")
                             connector.wire_connected = true
                         else
                             connector.wire_connected = false
                         end
                         if collision_end then
-                            print("connector collision end")
+                            -- print("connector collision end")
                             connector.wire_connected = true
                         else
                             connector.wire_connected = false
                         end
                     end
                     
-                end
+                end                
                 -- ensure we only move one objeect at a time
                 -- move chip
                 if flag_dragging_connector == nil and flag_dragging_wire == nil then
@@ -444,6 +434,32 @@ function love.update(dt)
             if current_chipping_state == chipping_states.soldering then
                 animations.soldering_smoke_animation:update(dt)
                 soldering_sfx()
+
+                for key, solder in pairs(soldering_locations_list) do
+                    if debug_mode then
+                        print("we are in debug...")
+                    end
+
+                    for key, wire in pairs(wires_list) do
+                        if debug_mode then
+                            print("we are in debug...")
+                        end
+    
+    
+                        local wire_start = wire.line_start
+                        local wire_end = wire.line_end
+                        
+                        local collison_start = collision_check(solder, wire_start)
+                        local collison_end = collision_check(solder, wire_end)
+
+                        if collison_start then
+                            print("SOLDER AND WIRE COLLISION START")
+                        end
+                        if collison_end then
+                            print("SOLDER AND WIRE COLLISION END")
+                        end
+                    end
+                end
 
             end
 
@@ -832,25 +848,28 @@ function move_connector_on_mouse_click()
     end
 end
 
-function move_wire_start_or_end_point_logic(wire_end_point)
-    local mouse_wire_collision = collision_check(mouse, wire_end_point)
+function move_wire_start_or_end_point_logic(wire)
+    local mouse_wire_collision = collision_check(mouse, wire)
 
     if love.mouse.isDown(1) then
-        if not wire_end_point.dragging and mouse_wire_collision and flag_dragging_wire == nil then
-            wire_end_point.dragging = true
-            wire_end_point.scaling = 5
-            flag_dragging_wire = wire_end_point -- This is now specific to the endpoint (start or end)
-            mouse.mouse_x_chip_off_set = mouse_x - wire_end_point.x
-            mouse.mouse_y_chip_off_set = mouse_y - wire_end_point.y
+        if not wire.dragging and mouse_wire_collision and flag_dragging_wire == nil and wire.soldered == false then
+            wire.dragging = true
+            wire.scaling = 5
+            flag_dragging_wire = wire -- This is now specific to the endpoint (start or end)
+            mouse.mouse_x_chip_off_set = mouse_x - wire.x
+            mouse.mouse_y_chip_off_set = mouse_y - wire.y
         end
     else
-        wire_end_point.dragging = false
-        wire_end_point.scaling = 2 -- back to normal
+        wire.dragging = false
+        wire.scaling = 2 -- back to normal
+        if wire.soldered then
+            print("the wire is soldered you cant move it")
+        end
     end
 
-    if wire_end_point.dragging then
-        wire_end_point.x = mouse_x - mouse.mouse_x_chip_off_set
-        wire_end_point.y = mouse_y - mouse.mouse_y_chip_off_set
+    if wire.dragging then
+        wire.x = mouse_x - mouse.mouse_x_chip_off_set
+        wire.y = mouse_y - mouse.mouse_y_chip_off_set
     end
 end
 
