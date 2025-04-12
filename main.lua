@@ -127,6 +127,21 @@ local connectors_list = {} -- list to hold the connectors we need to solder the 
 
 local wires_list = {}
 
+local soldering_locations_list = {}
+
+local glue_gun_locations_list = {}
+
+local soldering_iron_settings = {
+    x_offset = 0,
+    y_offset = 16,
+    scaling = 4
+}
+local glue_gun_settings = {
+    x_offset = 0,
+    y_offset = 3,
+    scaling = 4
+}
+
 
 local enemies = {
 
@@ -153,6 +168,7 @@ local mouse = {
 }
 
 local drag_icon_flag = false
+local glue_gun_pressed_flag = false
 
 local timer = 0
 
@@ -206,6 +222,7 @@ function love.load()
     image_path.hand_normal = sprite_source .. "kenney_hand_normal.png"
     image_path.soldering_iron = sprite_source .. "soldering_iron.png"
     image_path.glue_gun = sprite_source .. "glue_gun.png"
+    image_path.glue_gun_pressed = sprite_source .. "glue_gun_pressed.png"
 
     -- create the images  
     -- new_img = love.graphics.newImage
@@ -222,6 +239,7 @@ function love.load()
     images.hand_normal = love.graphics.newImage(image_path.hand_normal)
     images.soldering_iron = love.graphics.newImage(image_path.soldering_iron)
     images.glue_gun = love.graphics.newImage(image_path.glue_gun)
+    images.glue_gun_pressed = love.graphics.newImage(image_path.glue_gun_pressed)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
@@ -391,11 +409,16 @@ function love.draw()
                 
             end
             if current_chipping_state == chipping_states.soldering then
-                love.graphics.draw(images.soldering_iron, mouse_x, mouse_y - (16 * 4 ) , 0, 4, 4)
+                love.graphics.draw(images.soldering_iron, mouse_x, mouse_y - (soldering_iron_settings.y_offset * soldering_iron_settings.scaling ) , 0, soldering_iron_settings.scaling, soldering_iron_settings.scaling)
                 
             end
             if current_chipping_state == chipping_states.glueing then
-                love.graphics.draw(images.glue_gun, mouse_x, mouse_y - (3 * 4), 0, 4,4)
+                if glue_gun_pressed_flag then
+                    love.graphics.draw(images.glue_gun_pressed, mouse_x, mouse_y - (3 * 4), 0, 4,4)
+                else
+                    love.graphics.draw(images.glue_gun, mouse_x, mouse_y - (3 * 4), 0, 4,4)
+
+                end
             end
         end
 
@@ -491,6 +514,7 @@ function love.mousepressed(x, y, button, istouch)
     -- when the leftm mouse  is pressed, we want to save the initial click x,y position
     if button == 1 then -- Versions prior to 0.10.0 use the MouseConstant 'l'
         drag_icon_flag = true
+        glue_gun_pressed_flag = true
     end
     if button == 2 then
      
@@ -507,6 +531,7 @@ function love.mousepressed(x, y, button, istouch)
     -- when the left mouse is released we want to reset the mouse selection so we can stop drawing the square on the screen
     if button == 1 then
         drag_icon_flag = false
+        glue_gun_pressed_flag = false
     end
 
     if button == 2 then
