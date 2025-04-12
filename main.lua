@@ -135,6 +135,9 @@ local enemies = {
 local stats = {
 }
 
+local soldering_locations_list = {}
+
+local glue_gun_locations_list = {}
 
 local mouse = {
     x = 0,
@@ -795,3 +798,4 @@ end
 function reset_color()
     love.graphics.setColor(1,1,1)
 end
+
