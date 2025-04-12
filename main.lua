@@ -366,13 +366,17 @@ function love.update(dt)
                         
                     end
                 end
-
+                
+                -- check if a wire i connected to the chip or a connector
                 for key, wire in pairs(wires_list) do
                     if debug_mode then
                         print("we are in debug...")
                     end
+
                     local wire_start = wire.line_start
                     local wire_end = wire.line_end
+
+                    -- create a local copy of the pin so we can add the chip.x and chip.y to the posision
                     for key, pin in pairs(chip_pins_list) do
                         local this_pin = { 
                             x = chip.x + pin.x,
@@ -388,10 +392,20 @@ function love.update(dt)
                         local collision_end = collision_check(wire_end, this_pin)
                         if collision_start then
                             print("wire collision start")
+                            pin.wire_connected = true
+                        else
+                            pin.wire_connected = false
                         end
                         if collision_end then
                             print("wire collision end")
+                            pin.wire_connected = true
+                        else
+                            pin.wire_connected = false
                         end
+                    end
+
+                    for key, connector in pairs(connectors_list) do
+                        
                     end
                     
                 end
