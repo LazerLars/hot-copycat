@@ -225,6 +225,7 @@ function love.load()
     image_path.glue_gun = sprite_source .. "glue_gun.png"
     image_path.glue_gun_pressed = sprite_source .. "glue_gun_pressed.png"
     image_path.soldering_smoke_sprite_sheet = sprite_source .. "soldering_smoke-Sheet.png"
+    image_path.glue_stain = sprite_source .. "glue_stain.png"
 
     -- create the images  
     -- new_img = love.graphics.newImage
@@ -243,6 +244,7 @@ function love.load()
     images.glue_gun = love.graphics.newImage(image_path.glue_gun)
     images.glue_gun_pressed = love.graphics.newImage(image_path.glue_gun_pressed)
     images.soldering_smoke_sprite_sheet = love.graphics.newImage(image_path.soldering_smoke_sprite_sheet)
+    images.glue_stain = love.graphics.newImage(image_path.glue_stain)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
@@ -433,7 +435,10 @@ function love.draw()
                 end
             end
         end
-
+        for key, glue_stain in pairs(glue_gun_locations_list) do
+            love.graphics.draw(images.glue_stain, glue_stain.x, glue_stain.y, 0, 4, 4)
+        end
+        love.graphics.draw(images.glue_stain, 200, 200, 0, 4, 4)
 
         if developerMode == true then
     
@@ -507,6 +512,7 @@ function love.keypressed(key)
         reset_chip()
         reset_connectors()
         reset_wires()
+        glue_gun_locations_list = {}
     end
 
     -- toggle fullscreen
@@ -528,6 +534,10 @@ function love.mousepressed(x, y, button, istouch)
         drag_icon_flag = true
         glue_gun_pressed_flag = true
         soldering_pressed_flag = true
+
+        if current_chipping_state == chipping_states.glueing then
+            add_glue_stain()
+        end
     end
     if button == 2 then
      
@@ -838,3 +848,12 @@ function reset_color()
     love.graphics.setColor(1,1,1)
 end
 
+function add_glue_stain()
+
+    local glue_stain = {
+        x = mouse_x, --+ (glue_gun_settings.x_offset * glue_gun_settings.scaling),
+        y = mouse_y - 12 -- + (glue_gun_settings.y_offset * glue_gun_settings.scaling)
+    }
+
+    table.insert(glue_gun_locations_list, glue_stain)
+end
