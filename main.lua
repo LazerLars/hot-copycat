@@ -403,7 +403,8 @@ function love.update(dt)
                             pin.wire_connected = false
                         end
                     end
-
+                    
+                    -- check if a wire is connected to a connector
                     for key, connector in pairs(connectors_list) do
                         local collision_start = collision_check(wire_start, connector)
                         local collision_end = collision_check(wire_end, connector)
