@@ -405,7 +405,20 @@ function love.update(dt)
                     end
 
                     for key, connector in pairs(connectors_list) do
-                        
+                        local collision_start = collision_check(wire_start, connector)
+                        local collision_end = collision_check(wire_end, connector)
+                        if collision_start then
+                            print("connector collision start")
+                            connector.wire_connected = true
+                        else
+                            connector.wire_connected = false
+                        end
+                        if collision_end then
+                            print("connector collision end")
+                            connector.wire_connected = true
+                        else
+                            connector.wire_connected = false
+                        end
                     end
                     
                 end
@@ -873,6 +886,7 @@ function add_connector(sprite)
         dragging = false,
         glued = false,
         sprite = sprite,
+        wire_connected = false,
         wire_soldered = false
     }
     if #connectors_list > 0 then
