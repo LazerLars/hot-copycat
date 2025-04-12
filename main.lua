@@ -21,7 +21,7 @@ local settings = {
 
 debug_mode = false
 
-developerMode = true
+developerMode = false
 draw_hit_boxes = false
 
 local pause_game = false
@@ -186,7 +186,7 @@ function love.load()
     
     math.randomseed( os.time() )
     -- love.mouse.setVisible(false)
-    
+    love.mouse.setVisible(false)
     
     -- love.graphics.setBackgroundColor( 0/255, 135/255, 81/255) -- green
     -- love.graphics.setBackgroundColor( 227/255, 160/255, 102/255)
