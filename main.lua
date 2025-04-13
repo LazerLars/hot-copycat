@@ -900,7 +900,7 @@ function love.mousepressed(x, y, button, istouch)
     if button == 1 then -- Versions prior to 0.10.0 use the MouseConstant 'l'
     
         if current_scene == scenes.splash then
-            current_scene = scenes.chipping
+            current_scene = scenes.tutorial
         end
         if current_scene == scenes.tutorial then
             go_to_next_tutorial_step()
