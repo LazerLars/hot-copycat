@@ -376,9 +376,12 @@ function love.update(dt)
                     local wire_start = wire.line_start
                     local wire_end = wire.line_end
 
-                   
+                    wire_start.connected_pin = false
+                    wire_end.connected_pin = false
                     -- create a local copy of the pin so we can add the chip.x and chip.y to the posision
                     for key, pin in pairs(chip_pins_list) do
+                        pin.wire_connected = false
+
                         local this_pin = { 
                             x = chip.x + pin.x,
                             y = chip.y +  pin.y,
@@ -395,39 +398,32 @@ function love.update(dt)
                             -- print("wire collision start")
                             wire_start.connected_pin = true
                             pin.wire_connected = true
-                        else
-                            -- pin.wire_connected = false
-                            -- wire_start.connected_pin = false
+        
                         end
                         if collision_end then
                             -- print("wire collision end")
                             wire_end.connected_pin = true
                             pin.wire_connected = true
-                        else
-                            -- pin.wire_connected = false
-                            -- wire_end.connected_pin = false
                         end
                     end
                     
                     -- check if a wire is connected to a connector
+                    wire_start.connected_connector = false
+                    wire_end.connected_connector = false
                     for key, connector in pairs(connectors_list) do
+                        connector.wire_connected = false
+
                         local collision_start = collision_check(wire_start, connector)
                         local collision_end = collision_check(wire_end, connector)
                         if collision_start then
                             -- print("connector collision start")
                             wire_start.connected_connector = true
                             connector.wire_connected = true
-                        else
-                            connector.wire_connected = false
-                            -- wire_start.connected_connector = false
                         end
                         if collision_end then
                             -- print("connector collision end")
                             wire_end.connected_connector = true
                             connector.wire_connected = true
-                        else
-                            connector.wire_connected = false
-                            -- wire_end.connected_connector = false
                         end
                     end
                     
