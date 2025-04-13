@@ -1,4 +1,8 @@
-# HOT COPY CAT
+# HOT COPYCAT
+  
+PLAY THE GAME HERE: https://lazerlars.itch.io/hot-copycat
+
+
 FRENJAM @ 2025 - THEME " BOOTLEGS "  
 [https://itch.io/jam/love2d-jam-2025  ](https://itch.io/jam/frenjam)
 
