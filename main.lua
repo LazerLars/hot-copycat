@@ -320,7 +320,7 @@ function love.load()
     mouse.x = mouse_x
     mouse.y = mouse_y
 
-    current_scene = scenes.tutorial
+    -- current_scene = scenes.tutorial
 end
 
 function love.update(dt)
@@ -681,7 +681,9 @@ function love.draw()
         line_increment = line_increment + line_increment_base
         love.graphics.print("'Mouse 1' - To solder wire", 1, 1 + line_increment) 
         line_increment = line_increment + line_increment_base
-        love.graphics.print("Backspace' - reset current mod scene, if you fucked up :)", 1, 1 + line_increment) 
+        love.graphics.print("'Backspace' - reset current mod scene, if you fucked up :)", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("'M' - Mute/Unmute", 1, 1 + line_increment) 
         line_increment = line_increment + line_increment_base
         
     end
@@ -738,6 +740,14 @@ function love.keypressed(key)
 
     if key == "backspace" then
         reset_console_mod()
+    end
+
+    if key == "m" then
+        if sfx.music_loop:isPlaying() then
+            sfx.music_loop:stop()
+        else
+            sfx.music_loop:play()
+        end
     end
 
     if key == "space" then
@@ -1376,9 +1386,6 @@ function go_to_next_tutorial_step()
         tutorial_step = tutorial_step + 1
         print("next tutorial step: " .. tutorial_step)
     end
-
 end
 
-function love.keypressed(key)
-    go_to_next_tutorial_step()
-end
+
