@@ -799,10 +799,30 @@ function love.keypressed(key)
     end
 
     if key == 'left' then
-        player.facing_left = true
+        if current_scene == scenes.tutorial then
+            tutorial_step = tutorial_step -1
+            if tutorial_step == 0 then
+                tutorial_step = 8
+            end
+        end
     end
     if key == 'right' then
-        player.facing_left = false
+        if current_scene == scenes.tutorial then
+                
+            
+            tutorial_step = tutorial_step + 1
+            if tutorial_step > 8 then
+                current_scene = scenes.chipping
+                tutorial_step = 1
+            end
+        end
+       
+    end
+    if key == "t" then
+        if pause_game then
+            current_scene = scenes.tutorial
+            pause_game = false
+        end
     end
     if key == "escape" then
         if pause_game == false then
@@ -853,6 +873,9 @@ function love.mousepressed(x, y, button, istouch)
     if button == 1 then -- Versions prior to 0.10.0 use the MouseConstant 'l'
         if current_scene == scenes.tutorial then
             go_to_next_tutorial_step()
+            if tutorial_step > 8 then
+                current_scene = scenes.chipping
+            end
         end
         drag_icon_flag = true
         glue_gun_pressed_flag = true
