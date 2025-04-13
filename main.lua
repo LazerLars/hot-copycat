@@ -358,6 +358,7 @@ function love.update(dt)
             splash_timer = splash_timer + dt
         else
             current_scene = scenes.tutorial
+            tutorial_step = 1
         end
         
     end
@@ -901,6 +902,7 @@ function love.mousepressed(x, y, button, istouch)
     
         if current_scene == scenes.splash then
             current_scene = scenes.tutorial
+            tutorial_step = 0
         end
         if current_scene == scenes.tutorial then
             go_to_next_tutorial_step()
