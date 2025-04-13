@@ -241,6 +241,16 @@ function love.load()
     image_path.soldering_smoke_sprite_sheet = sprite_source .. "soldering_smoke-Sheet.png"
     image_path.glue_stain = sprite_source .. "glue_stain.png"
     image_path.soldering_stain = sprite_source .. "soldering_stain.png"
+    
+    image_path.tutorial_00 = sprite_source .. "tutorial_00.png"
+    image_path.tutorial_01 = sprite_source .. "tutorial_01.png"
+    image_path.tutorial_02 = sprite_source .. "tutorial_02.png"
+    image_path.tutorial_03 = sprite_source .. "tutorial_03.png"
+    image_path.tutorial_04 = sprite_source .. "tutorial_04.png"
+    image_path.tutorial_05 = sprite_source .. "tutorial_05.png"
+    image_path.tutorial_06 = sprite_source .. "tutorial_06.png"
+    image_path.tutorial_07 = sprite_source .. "tutorial_07.png"
+    image_path.tutorial_08 = sprite_source .. "tutorial_08.png"
 
     -- create the images  
     -- new_img = love.graphics.newImage
@@ -261,6 +271,16 @@ function love.load()
     images.soldering_smoke_sprite_sheet = love.graphics.newImage(image_path.soldering_smoke_sprite_sheet)
     images.glue_stain = love.graphics.newImage(image_path.glue_stain)
     images.soldering_stain = love.graphics.newImage(image_path.soldering_stain)
+    
+    images.tutorial_00 = love.graphics.newImage(image_path.tutorial_00)
+    images.tutorial_01 = love.graphics.newImage(image_path.tutorial_01)
+    images.tutorial_02 = love.graphics.newImage(image_path.tutorial_02)
+    images.tutorial_03 = love.graphics.newImage(image_path.tutorial_03)
+    images.tutorial_04 = love.graphics.newImage(image_path.tutorial_04)
+    images.tutorial_05 = love.graphics.newImage(image_path.tutorial_05)
+    images.tutorial_06 = love.graphics.newImage(image_path.tutorial_06)
+    images.tutorial_07 = love.graphics.newImage(image_path.tutorial_07)
+    images.tutorial_08 = love.graphics.newImage(image_path.tutorial_08)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
@@ -320,7 +340,7 @@ function love.load()
     mouse.x = mouse_x
     mouse.y = mouse_y
 
-    -- current_scene = scenes.tutorial
+    current_scene = scenes.tutorial
 end
 
 function love.update(dt)
@@ -539,8 +559,7 @@ function love.draw()
     
     love.graphics.setLineStyle('rough')
 
-    -- draw the progress of the current chip mod
-   draw_stats_of_current_mod()
+   
 
     if pause_game == false then
         if current_scene == scenes.front_desk then
@@ -559,9 +578,22 @@ function love.draw()
             end
             end 
         end
+
+        if current_scene == scenes.tutorial then
+            if tutorial_step == 1 then
+                
+                love.graphics.print("Press '2' to go to glue mode", 1, 1)
+                love.graphics.print("Press 'Left Mouse' to place glue on the circuit board", 1, 20)
+                love.graphics.draw(images.tutorial_00, 1,50)
+                love.graphics.print("NEXT 'Left Mouse'", 250, 150)
+                love.graphics.print("SKIP TUTORIAL 'Right Mouse'", 250, 165)
+            end
+        end
         
         
         if current_scene == scenes.chipping then
+            -- draw the progress of the current chip mod
+            draw_stats_of_current_mod()
             -- draw the circuit board
             love.graphics.draw(images.circut_board_00, circut_board.x, circut_board.y, 0, circut_board.scaling, circut_board.scaling)
 
@@ -796,7 +828,7 @@ function love.mousepressed(x, y, button, istouch)
     end
     if button == 2 then
         if current_scene == scenes.tutorial then
-            go_to_next_tutorial_step()
+           current_scene = scenes.chipping
         end
         if mouse_x < player.x then
             player.facing_left = true
