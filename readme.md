@@ -27,8 +27,14 @@ idea dev, spriting
 5th session (4h:26m)  
 ![](gif/hot%20copycat_new_5th.gif)  
   
-6th session (37m)
-
+  
+6th session (37m)  
+  
+7th session (3h:14m)  
+![](gif/hot%20copy%20cat%20cover.png)  
+  
+Total time spend: 19h:01m
+  
 Coding setup: VScode
 Spriting: Asesprite
 
