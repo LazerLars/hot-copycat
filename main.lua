@@ -143,9 +143,17 @@ local glue_gun_settings = {
     scaling = 4
 }
 
-
+local current_chip_mod_status = {
+    connectors_glued = 0,
+    chip_glued = 0,
+    wires_attached = 0,
+    wires_soldered = 0,
+}
 
 local stats = {
+    consoles_modded = 0,
+    time = 0
+
 }
 
 local soldering_locations_list = {}
@@ -515,11 +523,38 @@ function love.draw()
     
     love.graphics.setLineStyle('rough')
 
-    love.graphics.print("Connectors glued: " .. 1 .. "/" .. 6, settings.sceenWidth-170, 1)
-    love.graphics.print("chip glued: " .. 0 .. "/" .. 1, settings.sceenWidth-170, 15)
-    love.graphics.print("wires attached: " .. 0 .. "/" .. 12, settings.sceenWidth-170, 30)
-    love.graphics.print("wires soldered: " .. 0 .. "/" .. 12, settings.sceenWidth-170, 45)
-    
+    reset_current_mod_stats()
+    if chip.glued then
+        current_chip_mod_status.chip_glued = 1
+    end
+    for key, connector in pairs(connectors_list) do
+        if connector.glued then
+            current_chip_mod_status.connectors_glued = current_chip_mod_status.connectors_glued  + 1
+        end
+    end
+
+    for key, wire in pairs(wires_list) do
+        if wire.line_start.connected_pin then
+            current_chip_mod_status.wires_attached = current_chip_mod_status.wires_attached  + 1
+        end
+        if wire.line_end.connected_connector then
+            current_chip_mod_status.wires_attached = current_chip_mod_status.wires_attached  + 1
+        end
+
+        if wire.line_start.soldered then
+            current_chip_mod_status.wires_soldered = current_chip_mod_status.wires_soldered  + 1
+        end
+        if wire.line_end.soldered then
+            current_chip_mod_status.wires_soldered = current_chip_mod_status.wires_soldered  + 1
+        end
+        
+        
+    end
+    love.graphics.print("Connectors glued: " .. current_chip_mod_status.connectors_glued .. "/" .. 6, settings.sceenWidth-170, 1)
+    love.graphics.print("chip glued: " .. current_chip_mod_status.chip_glued .. "/" .. 1, settings.sceenWidth-170, 15)
+    love.graphics.print("wires attached: " .. current_chip_mod_status.wires_attached .. "/" .. 12, settings.sceenWidth-170, 30)
+    love.graphics.print("wires soldered: " .. current_chip_mod_status.wires_soldered .. "/" .. 12, settings.sceenWidth-170, 45)
+
     if pause_game == false then
         if current_scene == scenes.front_desk then
             if player.player_state == player_states.idle then
@@ -681,6 +716,7 @@ function love.keypressed(key)
         glue_gun_locations_list = {}
         chip_pins_list = {}
         add_chip_pins()
+        reset_current_mod_stats()
     end
 
     if key == "-" then
@@ -1175,4 +1211,13 @@ function add_chip_pins()
     }
 
     table.insert(chip_pins_list, pin)
+end
+
+function reset_current_mod_stats()
+    current_chip_mod_status = {
+        connectors_glued = 0,
+        chip_glued = 0,
+        wires_attached = 0,
+        wires_soldered = 0,
+    }
 end
