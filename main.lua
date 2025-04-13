@@ -468,7 +468,7 @@ function love.update(dt)
             end
 
             
-            
+            -- check if the wire is soldered, if yes then we need to mark it so we cant move the wire anymore
             for key, solder in pairs(soldering_locations_list) do
                 if debug_mode then
                     print("we are in debug...")
