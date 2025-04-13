@@ -482,18 +482,23 @@ function love.update(dt)
                     local collison_start = collision_check(solder, wire_start)
                     local collison_end = collision_check(solder, wire_end)
 
-                    if collison_start and wire_start.connected_pin == true or collison_start and wire_start.connected_connector == true then
+                    if collison_start and wire_start.connected_pin == true then
+                        if chip.glued then
+                            wire_start.soldered = true
+                        end
+                        -- print("SOLDER AND WIRE COLLISION START")
+                    end
+                    if collison_start and wire_start.connected_connector == true then
                         wire_start.soldered = true
-                        print("SOLDER AND WIRE COLLISION START")
+                        -- print("SOLDER AND WIRE COLLISION START")
                     end
                     if collison_end and wire_end.connected_pin == true or collison_end and wire_end.connected_connector == true then
                         wire_end.soldered = true
-                        print("SOLDER AND WIRE COLLISION END")
+                        -- print("SOLDER AND WIRE COLLISION END")
                     end
                 end
             end
         end
-        
     end
 
     if pause_game then
@@ -510,6 +515,11 @@ function love.draw()
     
     love.graphics.setLineStyle('rough')
 
+    love.graphics.print("Connectors glued: " .. 1 .. "/" .. 6, settings.sceenWidth-170, 1)
+    love.graphics.print("chip glued: " .. 0 .. "/" .. 1, settings.sceenWidth-170, 15)
+    love.graphics.print("wires attached: " .. 0 .. "/" .. 12, settings.sceenWidth-170, 30)
+    love.graphics.print("wires soldered: " .. 0 .. "/" .. 12, settings.sceenWidth-170, 45)
+    
     if pause_game == false then
         if current_scene == scenes.front_desk then
             if player.player_state == player_states.idle then
