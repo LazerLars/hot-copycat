@@ -327,22 +327,22 @@ function love.update(dt)
     if pause_game == false then
 
         timer = timer + dt
-        if current_scene == scenes.front_desk then
-            local player_move_completed =  player_move:update(dt)
-            if player_move_completed then
-                player.player_state = player_states.idle
-            end
-            -- player_move = tween.new(1, player, {x=400, y=400}, tween.easing.inOutSine)
-            mouse_x = maid64.mouse.getX()
-            mouse_y = maid64.mouse.getY()
-            if player.player_state == player_states.idle then
-                animations.player_idle_animation:update(dt)
-            end
-            if player.player_state == player_states.walking then
-                animations.player_walk_animation:update(dt)
-                -- player_move = tween.new(5, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
-            end
-        end
+        -- if current_scene == scenes.front_desk then
+        --     local player_move_completed =  player_move:update(dt)
+        --     if player_move_completed then
+        --         player.player_state = player_states.idle
+        --     end
+        --     -- player_move = tween.new(1, player, {x=400, y=400}, tween.easing.inOutSine)
+        --     mouse_x = maid64.mouse.getX()
+        --     mouse_y = maid64.mouse.getY()
+        --     if player.player_state == player_states.idle then
+        --         animations.player_idle_animation:update(dt)
+        --     end
+        --     if player.player_state == player_states.walking then
+        --         animations.player_walk_animation:update(dt)
+        --         -- player_move = tween.new(5, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
+        --     end
+        -- end
 
         if current_scene == scenes.chipping then
             
@@ -517,7 +517,7 @@ function love.update(dt)
     end
 
     if pause_game then
-        local a = 1
+        
      -- we pause here
     end
 end
@@ -531,10 +531,7 @@ function love.draw()
     love.graphics.setLineStyle('rough')
 
     -- draw the progress of the current chip mod
-    love.graphics.print("Connectors glued: " .. current_chip_mod_status.connectors_glued .. "/" .. 6, settings.sceenWidth-170, 1)
-    love.graphics.print("chip glued: " .. current_chip_mod_status.chip_glued .. "/" .. 1, settings.sceenWidth-170, 15)
-    love.graphics.print("wires attached: " .. current_chip_mod_status.wires_attached .. "/" .. 12, settings.sceenWidth-170, 30)
-    love.graphics.print("wires soldered: " .. current_chip_mod_status.wires_soldered .. "/" .. 12, settings.sceenWidth-170, 45)
+   draw_stats_of_current_mod()
 
     if pause_game == false then
         if current_scene == scenes.front_desk then
@@ -644,7 +641,39 @@ function love.draw()
     end
     
     if pause_game then
-
+        local line_increment = 15
+        local line_increment_base = 15
+        
+        love.graphics.print("Objective:", 1, 1) 
+        love.graphics.print("Place glue on the circuit board ", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("Drag and drop the connectors/chip on top of the glue", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("Connect one end of each wire to the a pin on the chip", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("Connect the other end of the wire to a connector", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("Solder the wires to the connectors and chip pins", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        line_increment = line_increment + line_increment_base
+        
+        love.graphics.print("Controls:", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("'1' - Drag connectors and chip mode", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("'Mouse 1' - click to drag elements", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("'2' - Glue gun mode", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("'Mouse 1' - To use glue gun", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("'3' - Soldering mode", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("'Mouse 1' - To solder wire", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        love.graphics.print("Backspace' - reset current mod scene, if you fucked up :)", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
+        
     end
 
     maid64.finish()--finishes the maid64 process
@@ -663,12 +692,12 @@ function love.keypressed(key)
         print("changing to dragging state: " .. current_chipping_state)
     end
     
-    if key == "2" then
+    if key == "3" then
         current_chipping_state = chipping_states.soldering
         print("chaning to solderings state: " .. current_chipping_state)
     end
 
-    if key == "3" then
+    if key == "2" then
         current_chipping_state = chipping_states.glueing
         print("changing to gluing state: " .. current_chipping_state)
     end
@@ -1314,4 +1343,14 @@ function draw_score_and_time()
     
     reset_color()
     love.graphics.print("CONSOLES MODDED: " .. stats.consoles_modded .. " Time: " .. string.format("%.2f", stats.time), 1, 5)
+end
+
+function draw_stats_of_current_mod()
+    if pause_game == false then
+        love.graphics.print("Connectors glued: " .. current_chip_mod_status.connectors_glued .. "/" .. 6, settings.sceenWidth-170, 1)
+        love.graphics.print("chip glued: " .. current_chip_mod_status.chip_glued .. "/" .. 1, settings.sceenWidth-170, 15)
+        love.graphics.print("wires attached: " .. current_chip_mod_status.wires_attached .. "/" .. 12, settings.sceenWidth-170, 30)
+        love.graphics.print("wires soldered: " .. current_chip_mod_status.wires_soldered .. "/" .. 12, settings.sceenWidth-170, 45)    
+    end
+    
 end
