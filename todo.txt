@@ -1,4 +1,9 @@
 TODO:
+++++++ only allow soldering if chip is glued
+++++++ only allow soldering if connector is glued
+
+
+
 +connectors needs to be added via a function to a list of connectors, so we can keep track of them and can connect wires to (should the connectors be placed manually? )
 +only place chip on avaliable place
 +attach a wire from chip to a connector point
