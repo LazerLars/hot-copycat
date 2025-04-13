@@ -67,7 +67,9 @@ SFX_STICKERRIPPER_slayer_92.wav by MrFossy -- https://freesound.org/s/590525/ --
 
 Pickup:  
 b2.ogg by Pellepyb -- https://freesound.org/s/431670/ -- License: Creative Commons 0  
-
+  
+Ohh yeah:  
+Oh yeah.mp3 by OMAGOD -- https://freesound.org/s/684666/ -- License: Creative Commons 0  
 
 
 Music:    
