@@ -47,7 +47,8 @@ local current_chipping_state = chipping_states.dragging
 
 local scenes = {
     chipping = 'chipping',
-    front_desk = 'front_desk'
+    front_desk = 'front_desk',
+    tutorial = 'turorial'
 }
 
 local current_scene = scenes.front_desk
