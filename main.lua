@@ -333,6 +333,17 @@ function love.update(dt)
         if current_scene == scenes.chipping then
             
             
+            if debug_mode then
+                print("we are in debug...")
+            end
+            
+
+            
+            if debug_mode then
+                print(#soldering_locations_list)
+                print("we are in debug...")
+            end
+            
             -- when we are in draggin state
             if current_chipping_state == chipping_states.dragging then
                 -- check for glue chip collision
@@ -354,7 +365,7 @@ function love.update(dt)
                         
                     end
                 end
-                
+
                 -- check if a wire is connected to the chip or a connector
                 for key, wire in pairs(wires_list) do
                     if debug_mode then
@@ -382,15 +393,19 @@ function love.update(dt)
                         local collision_end = collision_check(wire_end, this_pin)
                         if collision_start then
                             -- print("wire collision start")
+                            wire_start.connected_pin = true
                             pin.wire_connected = true
                         else
-                            pin.wire_connected = false
+                            -- pin.wire_connected = false
+                            -- wire_start.connected_pin = false
                         end
                         if collision_end then
                             -- print("wire collision end")
+                            wire_end.connected_pin = true
                             pin.wire_connected = true
                         else
-                            pin.wire_connected = false
+                            -- pin.wire_connected = false
+                            -- wire_start.connected_pin = false
                         end
                     end
                     
@@ -400,19 +415,29 @@ function love.update(dt)
                         local collision_end = collision_check(wire_end, connector)
                         if collision_start then
                             -- print("connector collision start")
+                            wire_start.connected_connector = true
                             connector.wire_connected = true
                         else
                             connector.wire_connected = false
+                            -- wire_start.connected_connector = false
                         end
                         if collision_end then
                             -- print("connector collision end")
+                            wire_end.connected_connector = true
                             connector.wire_connected = true
                         else
                             connector.wire_connected = false
+                            -- wire_end.connected_connector = false
                         end
                     end
                     
-                end                
+                end             
+                
+                
+                if debug_mode then
+                    print("we are in debug...")
+                end
+
                 -- ensure we only move one objeect at a time
                 -- move chip
                 if flag_dragging_connector == nil and flag_dragging_wire == nil then
@@ -435,31 +460,6 @@ function love.update(dt)
                 animations.soldering_smoke_animation:update(dt)
                 soldering_sfx()
 
-                for key, solder in pairs(soldering_locations_list) do
-                    if debug_mode then
-                        print("we are in debug...")
-                    end
-
-                    for key, wire in pairs(wires_list) do
-                        if debug_mode then
-                            print("we are in debug...")
-                        end
-    
-    
-                        local wire_start = wire.line_start
-                        local wire_end = wire.line_end
-                        
-                        local collison_start = collision_check(solder, wire_start)
-                        local collison_end = collision_check(solder, wire_end)
-
-                        if collison_start then
-                            print("SOLDER AND WIRE COLLISION START")
-                        end
-                        if collison_end then
-                            print("SOLDER AND WIRE COLLISION END")
-                        end
-                    end
-                end
 
             end
 
@@ -468,6 +468,34 @@ function love.update(dt)
             end
 
             
+            
+            for key, solder in pairs(soldering_locations_list) do
+                if debug_mode then
+                    print("we are in debug...")
+                end
+
+                for key, wire in pairs(wires_list) do
+                    if debug_mode then
+                        print("we are in debug...")
+                    end
+
+
+                    local wire_start = wire.line_start
+                    local wire_end = wire.line_end
+                    
+                    local collison_start = collision_check(solder, wire_start)
+                    local collison_end = collision_check(solder, wire_end)
+
+                    if collison_start and wire_start.connected_pin == true or collison_start and wire_start.connected_connector == true then
+                        wire_start.soldered = true
+                        print("SOLDER AND WIRE COLLISION START")
+                    end
+                    if collison_end and wire_end.connected_pin == true or collison_end and wire_end.connected_connector == true then
+                        wire_end.soldered = true
+                        print("SOLDER AND WIRE COLLISION END")
+                    end
+                end
+            end
         end
         
     end
@@ -946,7 +974,9 @@ function add_wire(color_numb)
             collision = false,
             dragging = false,
             placed = false,
-            soldered = false
+            soldered = false,
+            connected_pin = false,
+            connected_connector = false,
         },
         line_end = {
             x = x,
@@ -957,7 +987,9 @@ function add_wire(color_numb)
             collision = false,
             dragging = false,
             placed = false,
-            soldered = false
+            soldered = false,
+            connected_pin = false,
+            connected_connector = false,
         }
     }
 
