@@ -2,6 +2,11 @@ TODO:
 ++++++ only allow soldering if chip is glued
 ++++++ only allow soldering if connector is glued
 
+++ success screen when all are mounted
+
+++ next button for reset and make next soldering
+
+
 
 
 +connectors needs to be added via a function to a list of connectors, so we can keep track of them and can connect wires to (should the connectors be placed manually? )
