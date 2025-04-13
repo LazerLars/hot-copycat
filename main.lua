@@ -150,6 +150,10 @@ local current_chip_mod_status = {
     wires_soldered = 0,
 }
 
+local current_mod_complete = false
+
+local allready_played_gz_music = false
+
 local stats = {
     consoles_modded = 0,
     time = 0
@@ -281,6 +285,7 @@ function love.load()
     sfx.music_loop:setLooping(true)
     sfx.music_loop:play()
     sfx.music_loop:setVolume(0.5)
+    sfx.oh_yeah = love.audio.newSource("src/sfx/yey.mp3", 'static')
 
     -- sfx.glue:setLooping(true)
    
@@ -313,6 +318,7 @@ function love.load()
 end
 
 function love.update(dt)
+    stats.time = stats.time + dt
     mouse_x = maid64.mouse.getX()
     mouse_y = maid64.mouse.getY()
     mouse.x = mouse_x
@@ -340,12 +346,13 @@ function love.update(dt)
 
         if current_scene == scenes.chipping then
             
-            
+            calculate_progress_of_current_chip_mod()
+
+            check_of_current_mod_is_complete()
+
             if debug_mode then
                 print("we are in debug...")
             end
-            
-
             
             if debug_mode then
                 print(#soldering_locations_list)
@@ -523,33 +530,7 @@ function love.draw()
     
     love.graphics.setLineStyle('rough')
 
-    reset_current_mod_stats()
-    if chip.glued then
-        current_chip_mod_status.chip_glued = 1
-    end
-    for key, connector in pairs(connectors_list) do
-        if connector.glued then
-            current_chip_mod_status.connectors_glued = current_chip_mod_status.connectors_glued  + 1
-        end
-    end
-
-    for key, wire in pairs(wires_list) do
-        if wire.line_start.connected_pin then
-            current_chip_mod_status.wires_attached = current_chip_mod_status.wires_attached  + 1
-        end
-        if wire.line_end.connected_connector then
-            current_chip_mod_status.wires_attached = current_chip_mod_status.wires_attached  + 1
-        end
-
-        if wire.line_start.soldered then
-            current_chip_mod_status.wires_soldered = current_chip_mod_status.wires_soldered  + 1
-        end
-        if wire.line_end.soldered then
-            current_chip_mod_status.wires_soldered = current_chip_mod_status.wires_soldered  + 1
-        end
-        
-        
-    end
+    -- draw the progress of the current chip mod
     love.graphics.print("Connectors glued: " .. current_chip_mod_status.connectors_glued .. "/" .. 6, settings.sceenWidth-170, 1)
     love.graphics.print("chip glued: " .. current_chip_mod_status.chip_glued .. "/" .. 1, settings.sceenWidth-170, 15)
     love.graphics.print("wires attached: " .. current_chip_mod_status.wires_attached .. "/" .. 12, settings.sceenWidth-170, 30)
@@ -598,7 +579,7 @@ function love.draw()
             end
             
             for key, wire in pairs(wires_list) do
-                set_color(wire.color_numb)
+                set_color_with_transparency(wire.color_numb)
                 love.graphics.rectangle('line', wire.line_start.x, wire.line_start.y, wire.line_start.height, wire.line_start.width, 0, wire.line_start.scaling, wire.line_start.scaling)
                 love.graphics.rectangle('line', wire.line_end.x, wire.line_end.y, wire.line_end.height, wire.line_end.width, 0, wire.line_end.scaling, wire.line_end.scaling)
                 love.graphics.setLineWidth(wire.line_width)
@@ -652,6 +633,13 @@ function love.draw()
             -- love.graphics.rectangle("fill", maid64.mouse.getX(),  maid64.mouse.getY(), 1,1)
         end
 
+        if current_mod_complete then
+            draw_mod_complete_screen()
+        end
+        
+        -- draw stats on the screen
+      draw_score_and_time()
+        
         
     end
     
@@ -709,16 +697,16 @@ function love.keypressed(key)
         end
     end
 
-    if key == "," then
-        reset_chip()
-        reset_connectors()
-        reset_wires()
-        glue_gun_locations_list = {}
-        chip_pins_list = {}
-        add_chip_pins()
-        reset_current_mod_stats()
+    if key == "backspace" then
+        reset_console_mod()
     end
 
+    if key == "space" then
+        if current_mod_complete then
+            reset_console_mod()
+            stats.consoles_modded = stats.consoles_modded + 1
+        end
+    end
     if key == "-" then
         debug_mode = true
     end
@@ -1055,8 +1043,30 @@ function reset_wires()
     
 end
 
-function set_color(color_numb)
+function set_color_with_transparency(color_numb)
     local transparency = 0.7
+    if color_numb == 1 then
+        love.graphics.setColor(241/255, 36/255, 17/255, transparency) -- red
+    end
+    if color_numb == 2 then
+        love.graphics.setColor(255/255, 38,255, 116/255, transparency) -- pink
+    end
+    if color_numb == 3 then
+        love.graphics.setColor(255/255, 209/255, 0, transparency) -- yellow
+    end
+    if color_numb == 4 then
+        love.graphics.setColor(16/255, 210/255, 17/255, transparency) -- green
+    end
+    if color_numb == 5 then
+        love.graphics.setColor(25/255, 134/255, 242/255, transparency) -- blue
+    end
+    if color_numb == 6 then
+        love.graphics.setColor(195/255, 195/255, 195/255, transparency) -- grey
+    end
+end
+
+function set_color(color_numb)
+    local transparency = 1
     if color_numb == 1 then
         love.graphics.setColor(241/255, 36/255, 17/255, transparency) -- red
     end
@@ -1220,4 +1230,88 @@ function reset_current_mod_stats()
         wires_attached = 0,
         wires_soldered = 0,
     }
+end
+
+-- calculate how long the user is with the current mod
+function calculate_progress_of_current_chip_mod()
+    
+    reset_current_mod_stats()
+    if chip.glued then
+        current_chip_mod_status.chip_glued = 1
+    end
+    for key, connector in pairs(connectors_list) do
+        if connector.glued then
+            current_chip_mod_status.connectors_glued = current_chip_mod_status.connectors_glued  + 1
+        end
+    end
+
+    for key, wire in pairs(wires_list) do
+        if wire.line_start.connected_pin then
+            current_chip_mod_status.wires_attached = current_chip_mod_status.wires_attached  + 1
+        end
+
+        if wire.line_end.connected_pin then
+            current_chip_mod_status.wires_attached = current_chip_mod_status.wires_attached  + 1
+        end
+        if wire.line_start.connected_connector then
+            current_chip_mod_status.wires_attached = current_chip_mod_status.wires_attached  + 1
+        end
+        if wire.line_end.connected_connector then
+            current_chip_mod_status.wires_attached = current_chip_mod_status.wires_attached  + 1
+        end
+
+        if wire.line_start.soldered then
+            current_chip_mod_status.wires_soldered = current_chip_mod_status.wires_soldered  + 1
+        end
+        if wire.line_end.soldered then
+            current_chip_mod_status.wires_soldered = current_chip_mod_status.wires_soldered  + 1
+        end    
+    end
+
+
+end
+
+
+function draw_mod_complete_screen()
+    set_color(1)
+    love.graphics.rectangle("fill", settings.sceenWidth/2 - 50, settings.screenHeight/2, 105, 20)
+    reset_color()
+    love.graphics.print("MOD COMPLETE", settings.sceenWidth/2 - 45, settings.screenHeight/2 + 5)
+    set_color(3)
+    love.graphics.rectangle("fill", settings.sceenWidth/2 - 155, settings.screenHeight/2 + 25, 305, 20)
+    reset_color()
+    love.graphics.print("CLICK '''SPACE''' TO MOD NEXT CONSOLE", settings.sceenWidth/2 - 150, settings.screenHeight/2 + 30)
+end
+
+function check_of_current_mod_is_complete()
+    if current_chip_mod_status.connectors_glued == 6 and current_chip_mod_status.chip_glued == 1 and current_chip_mod_status.wires_attached == 12 and current_chip_mod_status.wires_soldered == 12 then
+        current_mod_complete = true
+    end
+
+    if current_mod_complete and allready_played_gz_music == false then
+        sfx.oh_yeah:play()
+        allready_played_gz_music = true
+    end
+end
+
+function reset_console_mod()
+    reset_chip()
+    reset_connectors()
+    reset_wires()
+    glue_gun_locations_list = {}
+    chip_pins_list = {}
+    add_chip_pins()
+    reset_current_mod_stats()
+    soldering_locations_list = {}
+    glue_gun_locations_list = {}
+    current_mod_complete = false
+    allready_played_gz_music = false
+end
+
+function draw_score_and_time()
+    set_color(1)
+    love.graphics.rectangle("fill", 1,1, 255, 20)
+    
+    reset_color()
+    love.graphics.print("CONSOLES MODDED: " .. stats.consoles_modded .. " Time: " .. string.format("%.2f", stats.time), 1, 5)
 end
