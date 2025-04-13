@@ -761,6 +761,8 @@ function love.draw()
         line_increment = line_increment + line_increment_base
         love.graphics.print("'M' - Mute/Unmute", 1, 1 + line_increment) 
         line_increment = line_increment + line_increment_base
+        love.graphics.print("'T' - Start Tutorial", 1, 1 + line_increment) 
+        line_increment = line_increment + line_increment_base
         
     end
 
@@ -1420,7 +1422,13 @@ function calculate_progress_of_current_chip_mod()
             current_chip_mod_status.wires_soldered = current_chip_mod_status.wires_soldered  + 1
         end    
     end
+    if current_chip_mod_status.wires_soldered  > 12 then
+        current_chip_mod_status.wires_soldered = 12
+    end
 
+    if current_chip_mod_status.wires_attached  > 12 then
+        current_chip_mod_status.wires_attached = 12
+    end
 
 end
 
