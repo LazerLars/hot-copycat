@@ -405,7 +405,7 @@ function love.update(dt)
                             pin.wire_connected = true
                         else
                             -- pin.wire_connected = false
-                            -- wire_start.connected_pin = false
+                            -- wire_end.connected_pin = false
                         end
                     end
                     
