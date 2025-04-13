@@ -584,9 +584,53 @@ function love.draw()
                 
                 love.graphics.print("Press '2' to go to glue mode", 1, 1)
                 love.graphics.print("Press 'Left Mouse' to place glue on the circuit board", 1, 20)
-                love.graphics.draw(images.tutorial_00, 1,50)
+                love.graphics.draw(images.tutorial_00, 1,70)
                 love.graphics.print("NEXT 'Left Mouse'", 250, 150)
                 love.graphics.print("SKIP TUTORIAL 'Right Mouse'", 250, 165)
+            end
+            if tutorial_step == 2 then
+                love.graphics.print("Press '1' to go to drag mode", 1, 1)
+                love.graphics.print("Press'n'hold 'Left Mouse' on the chip and drag on some glue", 1, 20)
+                love.graphics.print("Release on top to glue to lock it", 1, 40)
+                love.graphics.draw(images.tutorial_01, 1,70)
+            end
+            if tutorial_step == 3 then
+                love.graphics.print("Place more glue", 1, 1)
+                love.graphics.print("Drag connectors with 'Left Mouse' on some glue", 1, 20)
+                love.graphics.print("Release on top to glue to lock it", 1, 40)
+                love.graphics.draw(images.tutorial_03, 1,70)
+            end
+            if tutorial_step == 4 then
+                love.graphics.print("Connect wires to chip pins and connectors", 1, 1)
+                love.graphics.print("Repeat with 6 wires and 6 connectors", 1, 20)
+                love.graphics.draw(images.tutorial_04, 1,70)
+            end
+            if tutorial_step == 5 then
+                love.graphics.print("Connect 6 wires end to the chip pins", 1, 1)
+                love.graphics.print("Connect the other end of the wire with a connector", 1, 20)
+                love.graphics.draw(images.tutorial_05, 1,70, 0, 2, 2)
+            end
+            if tutorial_step == 6 then
+                love.graphics.print("Press '3' to go to soldering mode", 1, 1)
+                love.graphics.print("Press 'Left mouse' to solder", 1, 20)
+                love.graphics.print("Solder each wire to each pin on the chip", 1, 40)
+                love.graphics.print("Solder each wire to each connector", 1, 60)
+                love.graphics.draw(images.tutorial_06, 1,80, 0, 2, 2)
+            end
+            if tutorial_step == 7 then
+                love.graphics.print("Summary:", 1, 1)
+                love.graphics.print("Glue the chip to the circuit board", 1, 20)
+                love.graphics.print("Glue the connectors to the circuit board", 1, 40)
+                love.graphics.print("Connect the wires with connectors and the chip pins", 1, 60)
+                love.graphics.print("Solder each wire with a chip pin and a connector", 1, 80)
+              
+                love.graphics.draw(images.tutorial_08, 1,100, 0, 0.5, 0.5)
+            end
+            if tutorial_step == 8 then
+                love.graphics.print("GZ you complete a mod", 1, 1)
+                love.graphics.print("Press 'SPACE' to start a new mod", 1, 20)
+              
+                love.graphics.draw(images.tutorial_07, 1,80, 0, 2, 2)
             end
         end
         
