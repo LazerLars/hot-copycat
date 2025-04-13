@@ -48,7 +48,8 @@ local current_chipping_state = chipping_states.dragging
 local scenes = {
     chipping = 'chipping',
     front_desk = 'front_desk',
-    tutorial = 'turorial'
+    tutorial = 'turorial',
+    splash = 'splash'
 }
 
 local tutorial_step = 1
@@ -187,6 +188,8 @@ local soldering_pressed_flag = false
 
 local timer = 0
 
+local splash_timer = 0
+
 local mouse_x = 0
 local mouse_y = 0
 
@@ -251,6 +254,8 @@ function love.load()
     image_path.tutorial_06 = sprite_source .. "tutorial_06.png"
     image_path.tutorial_07 = sprite_source .. "tutorial_07.png"
     image_path.tutorial_08 = sprite_source .. "tutorial_08.png"
+    
+    image_path.logo = sprite_source .. "splash screen_hot_copy_cat.png"
 
     -- create the images  
     -- new_img = love.graphics.newImage
@@ -281,6 +286,8 @@ function love.load()
     images.tutorial_06 = love.graphics.newImage(image_path.tutorial_06)
     images.tutorial_07 = love.graphics.newImage(image_path.tutorial_07)
     images.tutorial_08 = love.graphics.newImage(image_path.tutorial_08)
+    
+    images.logo = love.graphics.newImage(image_path.logo)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
@@ -340,11 +347,20 @@ function love.load()
     mouse.x = mouse_x
     mouse.y = mouse_y
 
-    current_scene = scenes.tutorial
+    -- current_scene = scenes.tutorial
+    current_scene = scenes.splash
 end
 
 function love.update(dt)
     
+    if current_scene == scenes.splash then
+        if splash_timer < 4 then
+            splash_timer = splash_timer + dt
+        else
+            current_scene = scenes.tutorial
+        end
+        
+    end
     mouse_x = maid64.mouse.getX()
     mouse_y = maid64.mouse.getY()
     mouse.x = mouse_x
@@ -577,6 +593,15 @@ function love.draw()
                 animations.player_walk_animation:draw(images.player, player.x, player.y, 0, -player.scaling, player.scaling, player.width, 0)
             end
             end 
+        end
+
+        if current_scene == scenes.splash then
+            love.graphics.setColor(223/255,221/255,181/255)
+            love.graphics.rectangle('fill', 1,1, 1000, 1000)
+            reset_color()
+            love.graphics.draw(images.logo, 120,70)
+
+            
         end
 
         if current_scene == scenes.tutorial then
@@ -873,6 +898,10 @@ end
 function love.mousepressed(x, y, button, istouch)
     -- when the leftm mouse  is pressed, we want to save the initial click x,y position
     if button == 1 then -- Versions prior to 0.10.0 use the MouseConstant 'l'
+    
+        if current_scene == scenes.splash then
+            current_scene = scenes.chipping
+        end
         if current_scene == scenes.tutorial then
             go_to_next_tutorial_step()
             if tutorial_step > 8 then
