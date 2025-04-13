@@ -51,6 +51,9 @@ local scenes = {
     tutorial = 'turorial'
 }
 
+local tutorial_step = 1
+local totorial_step_total = 5
+
 local current_scene = scenes.front_desk
 
 
@@ -316,10 +319,12 @@ function love.load()
     mouse_y = maid64.mouse.getY()
     mouse.x = mouse_x
     mouse.y = mouse_y
+
+    current_scene = scenes.tutorial
 end
 
 function love.update(dt)
-    stats.time = stats.time + dt
+    
     mouse_x = maid64.mouse.getX()
     mouse_y = maid64.mouse.getY()
     mouse.x = mouse_x
@@ -344,8 +349,11 @@ function love.update(dt)
         --         -- player_move = tween.new(5, player, {x=player.x_target, y=player.y_target}, tween.easing.inOutSine)
         --     end
         -- end
-
+        if current_scene == scenes.tutorial then
+            
+        end
         if current_scene == scenes.chipping then
+            stats.time = stats.time + dt
             
             calculate_progress_of_current_chip_mod()
 
@@ -613,6 +621,8 @@ function love.draw()
 
                 end
             end
+            -- draw stats on the screen
+            draw_score_and_time()
         end
         
 
@@ -635,8 +645,7 @@ function love.draw()
             draw_mod_complete_screen()
         end
         
-        -- draw stats on the screen
-      draw_score_and_time()
+        
         
         
     end
@@ -756,6 +765,9 @@ end
 function love.mousepressed(x, y, button, istouch)
     -- when the leftm mouse  is pressed, we want to save the initial click x,y position
     if button == 1 then -- Versions prior to 0.10.0 use the MouseConstant 'l'
+        if current_scene == scenes.tutorial then
+            go_to_next_tutorial_step()
+        end
         drag_icon_flag = true
         glue_gun_pressed_flag = true
         soldering_pressed_flag = true
@@ -773,7 +785,9 @@ function love.mousepressed(x, y, button, istouch)
         end
     end
     if button == 2 then
-     
+        if current_scene == scenes.tutorial then
+            go_to_next_tutorial_step()
+        end
         if mouse_x < player.x then
             player.facing_left = true
         else
@@ -1354,4 +1368,17 @@ function draw_stats_of_current_mod()
         love.graphics.print("wires soldered: " .. current_chip_mod_status.wires_soldered .. "/" .. 12, settings.sceenWidth-170, 45)    
     end
     
+end
+
+
+function go_to_next_tutorial_step()
+    if current_scene == scenes.tutorial then
+        tutorial_step = tutorial_step + 1
+        print("next tutorial step: " .. tutorial_step)
+    end
+
+end
+
+function love.keypressed(key)
+    go_to_next_tutorial_step()
 end
