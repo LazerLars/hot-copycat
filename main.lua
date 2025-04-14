@@ -576,7 +576,7 @@ end
 function love.draw()
     
     maid64.start()--starts the maid64 process
-    draw_mod_complete_screen()
+    -- draw_mod_complete_screen()
     love.graphics.setLineStyle('rough')
 
    
@@ -667,7 +667,7 @@ function love.draw()
         
         if current_scene == scenes.chipping then
             -- draw the progress of the current chip mod
-            -- draw_stats_of_current_mod() -- test draw stats
+            draw_stats_of_current_mod()
             -- draw the circuit board
             love.graphics.draw(images.circut_board_00, circut_board.x, circut_board.y, 0, circut_board.scaling, circut_board.scaling)
 
