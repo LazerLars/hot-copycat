@@ -245,6 +245,7 @@ function love.load()
     image_path.glue_stain = sprite_source .. "glue_stain.png"
     image_path.soldering_stain = sprite_source .. "soldering_stain.png"
     
+    
     image_path.tutorial_00 = sprite_source .. "tutorial_00.png"
     image_path.tutorial_01 = sprite_source .. "tutorial_01.png"
     image_path.tutorial_02 = sprite_source .. "tutorial_02.png"
@@ -256,6 +257,7 @@ function love.load()
     image_path.tutorial_08 = sprite_source .. "tutorial_08.png"
     
     image_path.logo = sprite_source .. "splash screen_hot_copy_cat.png"
+    image_path.skeleton = sprite_source .. "skeleton_frenjam.png"
 
     -- create the images  
     -- new_img = love.graphics.newImage
@@ -288,6 +290,7 @@ function love.load()
     images.tutorial_08 = love.graphics.newImage(image_path.tutorial_08)
     
     images.logo = love.graphics.newImage(image_path.logo)
+    images.skeleton = love.graphics.newImage(image_path.skeleton)
   
     -- grids
     grids.player_grid = anim8.newGrid(16, 16, images.player:getWidth(), images.player:getHeight())
@@ -601,6 +604,7 @@ function love.draw()
             love.graphics.rectangle('fill', 1,1, 1000, 1000)
             reset_color()
             love.graphics.draw(images.logo, 120,70)
+            love.graphics.draw(images.skeleton, 165,240)
 
             
         end
