@@ -576,7 +576,7 @@ end
 function love.draw()
     
     maid64.start()--starts the maid64 process
-    
+    draw_mod_complete_screen()
     love.graphics.setLineStyle('rough')
 
    
@@ -667,7 +667,7 @@ function love.draw()
         
         if current_scene == scenes.chipping then
             -- draw the progress of the current chip mod
-            draw_stats_of_current_mod()
+            -- draw_stats_of_current_mod() -- test draw stats
             -- draw the circuit board
             love.graphics.draw(images.circut_board_00, circut_board.x, circut_board.y, 0, circut_board.scaling, circut_board.scaling)
 
@@ -1477,6 +1477,7 @@ function draw_mod_complete_screen()
     love.graphics.rectangle("fill", settings.sceenWidth/2 - 155, settings.screenHeight/2 + 25, 305, 20)
     reset_color()
     love.graphics.print("CLICK '''SPACE''' TO MOD NEXT CONSOLE", settings.sceenWidth/2 - 150, settings.screenHeight/2 + 30)
+    love.graphics.draw(images.skeleton, settings.sceenWidth/2,settings.screenHeight/2 -20)
 end
 
 function check_of_current_mod_is_complete()
